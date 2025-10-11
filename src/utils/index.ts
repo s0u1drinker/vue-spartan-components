@@ -1,0 +1,1 @@
+export { setVarsForCustomColorTheme } from './customVariables'

@@ -3,6 +3,12 @@
   "license": "MIT",
   "version": "0.0.1",
   "description": "Vue 3 component library.",
+  "keywords": [
+    "vue",
+    "components",
+    "ui",
+    "library"
+  ],
   "type": "module",
   "main": "./dist/vue-spartan-components.umd.js",
   "module": "./dist/vue-spartan-components.es.js",
@@ -28,12 +34,13 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "vue": "^3.5.22"
+    "vue": "^3.5.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.37.0",
     "@types/node": "^24.6.2",
-    "@typescript-eslint/eslint-plugin": "^8.45.0",
-    "@typescript-eslint/parser": "^8.45.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.0",
+    "@typescript-eslint/parser": "^8.46.0",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.8.1",
@@ -50,7 +57,7 @@
     "vitest": "^3.2.4",
     "vue-tsc": "^3.1.0"
   },
-    "peerDependencies": {
+  "peerDependencies": {
     "vue": "^3.5.0"
   }
 }

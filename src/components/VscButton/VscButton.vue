@@ -1,12 +1,13 @@
 <template>
   <button
     class="vsc-button"
-    :class="[classes]"
+    :class="classes"
     :type="buttonType"
     :aria-label="ariaLabelText"
     :aria-disabled="disabled"
-    @click="handleClick"
     v-bind="restAttrs"
+    @click="handleClick"
+    ref="button"
   >
     <slot>
       <span v-if="text">{{ text }}</span>
@@ -15,50 +16,47 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
-import type { ButtonProps, ButtonClasses } from './types'
+import { computed, useAttrs, useTemplateRef } from 'vue'
+import { setVarsForCustomColorTheme } from '@utils'
+import type { VscButtonProps, VscButtonClasses } from './types'
 
 // Отключаем наследование атрибутов.
 defineOptions({
   inheritAttrs: false
 })
 // Убираем style из атрибутов.
-const { style, ...restAttrs } = useAttrs()
+const restAttrs = useAttrs()
+restAttrs.style = {}
 
-const props: ButtonProps = withDefaults(defineProps<ButtonProps>(), {
+const props: VscButtonProps = withDefaults(defineProps<VscButtonProps>(), {
   buttonType: 'button',
   buttonStyle: 'default',
   disabled: false,
 })
+const buttonRef = useTemplateRef<HTMLElement>('button')
+/**
+ * Цветовая тема кнопки.
+ */
 const buttonColor = computed<string>(() => {
-  let returnClass = `vsc-button_color_`
-
-  if (props.colorTheme) {
-    returnClass += `${props.colorTheme}`
-  } else if (props.customColorTheme) {
-    document.documentElement.style.setProperty('--vsc-custom-bg', props.customColorTheme.background)
-    document.documentElement.style.setProperty('--vsc-custom-txt', props.customColorTheme.text)
-    document.documentElement.style.setProperty('--vsc-custom-bg-dark', props.customColorTheme.dark)
-    document.documentElement.style.setProperty('--vsc-custom-bg-light', props.customColorTheme.light)
-    returnClass += 'custom'
-  } else {
-    returnClass += 'primary'
+  if (props.customColorTheme) {
+    setVarsForCustomColorTheme(props.customColorTheme, buttonRef.value)
+    return 'custom'
   }
 
-  return returnClass
+  return props.colorTheme ?? 'primary'
 })
 /**
  * Список классов кнопки.
  */
-const classes = computed<ButtonClasses[]>(() => ([
+const classes = computed<VscButtonClasses>(() => (
   {
     'vsc-button_disabled': props.disabled ?? false,
     'vsc-button_eleveated': props.elevated ?? false,
     'vsc-button_rounded': props.rounded ?? false,
-    [`vsc-button_${props.buttonStyle}`]: props.buttonStyle !== 'default'
-  },
-  buttonColor.value
-]))
+    [`vsc-button_${props.buttonStyle}`]: props.buttonStyle !== 'default',
+    [`vsc-button_color_${buttonColor.value}`]: true,
+  }
+))
 /**
  * Значение атрибута aria-label.
  */
@@ -106,7 +104,7 @@ if (!props.text && !props.iconLeft && !props.iconRight) {
   }
 
   &:active {
-    transform: scale(0.8);
+    transform: scale(0.9);
   }
 
   &_disabled {

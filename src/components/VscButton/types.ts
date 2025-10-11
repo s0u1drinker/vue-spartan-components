@@ -1,18 +1,18 @@
 type ColorThemes = 'primary' | 'accent' | 'success' | 'error'
 type HexColor = `#${string}`
 type Color = string | HexColor
-type CustomColorTheme = {
+export type VscCustomColorTheme = {
   background: Color,
   text: Color,
   dark: Color,
   light: Color,
 }
 
-export interface ButtonProps {
+export interface VscButtonProps {
   buttonType?: 'button' | 'submit' | 'reset',
   buttonStyle?: 'default' | 'plain' | 'outline',
   colorTheme?: ColorThemes,
-  customColorTheme?: CustomColorTheme,
+  customColorTheme?: VscCustomColorTheme,
   disabled?: boolean,
   elevated?: true,
   rounded?: true,
@@ -20,6 +20,7 @@ export interface ButtonProps {
   ariaLabel?: string,
   iconLeft?: string,
   iconRight?: string,
+  style?: never,
 }
 
-export type ButtonClasses = Record<string, boolean> | string
+export type VscButtonClasses = Record<string, boolean>

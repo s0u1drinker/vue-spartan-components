@@ -7,8 +7,9 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src'),
-      '@components': resolve(__dirname, 'src/components'),
+      '@': resolve(import.meta.dirname, 'src'),
+      '@components': resolve(import.meta.dirname, 'src/components'),
+      '@utils': resolve(import.meta.dirname, 'src/utils'),
     },
   },
   css: {
@@ -25,7 +26,7 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: resolve(import.meta.dirname, 'src/index.ts'),
       name: 'VueSpartanComponents',
       fileName: (format) => `vue-spartan-components.${format}.js`,
       cssFileName: 'styles',

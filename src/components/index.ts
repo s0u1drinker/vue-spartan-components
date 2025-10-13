@@ -1,2 +1,2 @@
 export { VscButton } from './VscButton'
-export type { VscButtonProps, VscCustomColorTheme } from './VscButton'
+export type { VscButtonProps, VscButtonClasses } from './VscButton'

@@ -9,8 +9,12 @@
       "@/*": ["./src/*"],
       "@components": ["./src/components"],
       "@components/*": ["./src/components/*"],
+      "@types": ["./src/types"],
+      "@types/*": ["./src/types/*"],
       "@utils": ["./src/utils"],
       "@utils/*": ["./src/utils/*"],
+      "@constants": ["./src/constants"],
+      "@constants/*": ["./src/constants/*"],
     },
 
     /* Linting */

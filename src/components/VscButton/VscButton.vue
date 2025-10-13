@@ -1,13 +1,12 @@
 <template>
   <button
+    ref="button"
     class="vsc-button"
     :class="classes"
     :type="buttonType"
     :aria-label="ariaLabelText"
     :aria-disabled="disabled"
-    v-bind="restAttrs"
     @click="handleClick"
-    ref="button"
   >
     <slot>
       <span v-if="text">{{ text }}</span>
@@ -16,17 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useAttrs, useTemplateRef } from 'vue'
+import { computed, useTemplateRef } from 'vue'
 import { setVarsForCustomColorTheme } from '@utils'
 import type { VscButtonProps, VscButtonClasses } from './types'
-
-// Отключаем наследование атрибутов.
-defineOptions({
-  inheritAttrs: false
-})
-// Убираем style из атрибутов.
-const restAttrs = useAttrs()
-restAttrs.style = {}
 
 const props: VscButtonProps = withDefaults(defineProps<VscButtonProps>(), {
   buttonType: 'button',
@@ -38,7 +29,7 @@ const buttonRef = useTemplateRef<HTMLElement>('button')
  * Цветовая тема кнопки.
  */
 const buttonColor = computed<string>(() => {
-  if (props.customColorTheme) {
+  if (props.customColorTheme && buttonRef.value !== null) {
     setVarsForCustomColorTheme(props.customColorTheme, buttonRef.value)
     return 'custom'
   }
@@ -136,7 +127,7 @@ if (!props.text && !props.iconLeft && !props.iconRight) {
   }
 
   &_color_custom {
-    @include buttonStylesForColor('custom-bg', var(--vsc-custom-txt));
+    @include buttonStylesForColor('custom', var(--vsc-custom-text));
   }
 }
 </style>

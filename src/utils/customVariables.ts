@@ -1,21 +1,26 @@
-import type { VscCustomColorTheme } from '@components'
+import { isValidCSSColor, isValidCustomColorProperty } from '@types'
+import { CUSTOM_COLOR_THEME_CLASSES } from '@constants'
+import type { VscCustomColorTheme } from '@types'
 
 /**
  * Устанавливает пользовательские настройки цвета (CSS-переменные) для настраиваемой темы.
  * @param customColors 
  * @param element 
  */
-export function setVarsForCustomColorTheme(customColors: VscCustomColorTheme, element?: HTMLElement | null): void {
-  if (!element) {
-    console.error('Передано значение <null> вместо элемента.')
-
-    return
-  }
-
+export function setVarsForCustomColorTheme(customColors: VscCustomColorTheme, element?: HTMLElement): void {
   const el = element ?? document.documentElement
 
-  el.style.setProperty('--vsc-custom-bg', customColors.background)
-  el.style.setProperty('--vsc-custom-txt', customColors.text)
-  el.style.setProperty('--vsc-custom-bg-dark', customColors.dark)
-  el.style.setProperty('--vsc-custom-bg-light', customColors.light)
+  for (const prop in customColors) {
+    // Проверяем свойство.
+    if (isValidCustomColorProperty(prop)) {
+      const colorValue = customColors[prop]
+      // Проверяем цвет.
+      if (isValidCSSColor(colorValue)) {
+        // Устанавливаем значение цвета в переменную.
+        el.style.setProperty(CUSTOM_COLOR_THEME_CLASSES[prop], colorValue)
+      } else {
+        console.error(`Неизвестное значение цвета: "${colorValue}"`)
+      }
+    }
+  }
 }

@@ -9,7 +9,9 @@ export default defineConfig({
     alias: {
       '@': resolve(import.meta.dirname, 'src'),
       '@components': resolve(import.meta.dirname, 'src/components'),
+      '@types': resolve(import.meta.dirname, 'src/types'),
       '@utils': resolve(import.meta.dirname, 'src/utils'),
+      '@constants': resolve(import.meta.dirname, 'src/constants'),
     },
   },
   css: {

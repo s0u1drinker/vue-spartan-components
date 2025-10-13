@@ -1,12 +1,6 @@
-type ColorThemes = 'primary' | 'accent' | 'success' | 'error'
-type HexColor = `#${string}`
-type Color = string | HexColor
-export type VscCustomColorTheme = {
-  background: Color,
-  text: Color,
-  dark: Color,
-  light: Color,
-}
+import type { ColorThemes, VscCustomColorTheme } from '@types'
+
+export type VscButtonClasses = Record<string, boolean>
 
 export interface VscButtonProps {
   buttonType?: 'button' | 'submit' | 'reset',
@@ -22,5 +16,3 @@ export interface VscButtonProps {
   iconRight?: string,
   style?: never,
 }
-
-export type VscButtonClasses = Record<string, boolean>

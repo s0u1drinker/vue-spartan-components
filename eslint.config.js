@@ -4,6 +4,7 @@ import js from '@eslint/js'
 import vue from 'eslint-plugin-vue'
 import ts from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
+import tseslint from 'typescript-eslint'
 
 export default defineConfig([
   js.configs.recommended,
@@ -28,6 +29,10 @@ export default defineConfig([
     rules: {
       ...ts.configs.recommended.rules,
     },
+  },
+  {
+    files: ['**/*.config.{js,ts,mjs,cjs}'],
+    ...tseslint.configs.disableTypeChecked,
   },
   {
     files: ['**/*.ts'],

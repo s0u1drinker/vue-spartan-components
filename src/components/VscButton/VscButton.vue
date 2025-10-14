@@ -5,7 +5,7 @@
     :class="classes"
     :type="buttonType"
     :aria-label="ariaLabelText"
-    :aria-disabled="disabled"
+    :disabled="disabled"
     @click="handleClick"
   >
     <slot>
@@ -15,13 +15,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef } from 'vue'
+import { computed, onMounted, useTemplateRef } from 'vue'
 import { setVarsForCustomColorTheme } from '@utils'
 import type { VscButtonProps, VscButtonClasses } from './types'
 
 const props: VscButtonProps = withDefaults(defineProps<VscButtonProps>(), {
   buttonType: 'button',
-  buttonStyle: 'default',
   disabled: false,
 })
 const buttonRef = useTemplateRef<HTMLElement>('button')
@@ -29,8 +28,7 @@ const buttonRef = useTemplateRef<HTMLElement>('button')
  * Цветовая тема кнопки.
  */
 const buttonColor = computed<string>(() => {
-  if (props.customColorTheme && buttonRef.value !== null) {
-    setVarsForCustomColorTheme(props.customColorTheme, buttonRef.value)
+  if (props.customColorTheme) {
     return 'custom'
   }
 
@@ -42,9 +40,9 @@ const buttonColor = computed<string>(() => {
 const classes = computed<VscButtonClasses>(() => (
   {
     'vsc-button_disabled': props.disabled ?? false,
-    'vsc-button_eleveated': props.elevated ?? false,
+    'vsc-button_elevated': props.elevated ?? false,
     'vsc-button_rounded': props.rounded ?? false,
-    [`vsc-button_${props.buttonStyle}`]: props.buttonStyle !== 'default',
+    [`vsc-button_${props.buttonStyle}`]: !!props.buttonStyle,
     [`vsc-button_color_${buttonColor.value}`]: true,
   }
 ))
@@ -60,7 +58,7 @@ const ariaLabelText = computed<string>(() => {
 })
 
 const emit = defineEmits<{
-  click: []
+  (e: 'click'): void
 }>()
 
 const handleClick = () => {
@@ -72,6 +70,12 @@ const handleClick = () => {
 if (!props.text && !props.iconLeft && !props.iconRight) {
   console.error('Необходимо указать иконку или текст для кнопки.')
 }
+
+onMounted(() => {
+  if (props.customColorTheme && buttonRef.value) {
+    setVarsForCustomColorTheme(props.customColorTheme, buttonRef.value)
+  }
+})
 </script>
 
 <style scoped lang="scss">

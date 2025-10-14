@@ -1,10 +1,13 @@
 import type { ColorThemes, VscCustomColorTheme } from '@types'
 
-export type VscButtonClasses = Record<string, boolean>
+export type VscButtonClasses = Record<`vsc-button_${string}`, boolean>
+
+type ButtonType = 'button' | 'submit' | 'reset'
+type ButtonStyle = 'plain' | 'outline'
 
 export interface VscButtonProps {
-  buttonType?: 'button' | 'submit' | 'reset',
-  buttonStyle?: 'default' | 'plain' | 'outline',
+  buttonType?: ButtonType,
+  buttonStyle?: ButtonStyle,
   colorTheme?: ColorThemes,
   customColorTheme?: VscCustomColorTheme,
   disabled?: boolean,

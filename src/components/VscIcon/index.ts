@@ -1,0 +1,1 @@
+export { default as VscIcon } from './VscIcon.vue'

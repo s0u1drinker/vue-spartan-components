@@ -5,17 +5,27 @@
     :class="classes"
     :type="buttonType"
     :aria-label="ariaLabelText"
+    :aria-disabled="disabled"
     :disabled="disabled"
     @click="handleClick"
   >
     <slot>
+      <VscIcon
+        :icon-name="props.iconLeft"
+        v-if="props.iconLeft"
+      />
       <span v-if="text">{{ text }}</span>
+      <VscIcon
+        :icon-name="props.iconRight"
+        v-if="props.iconRight"
+      />
     </slot>
   </button>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, useTemplateRef } from 'vue'
+import { VscIcon } from '@components';
 import { setVarsForCustomColorTheme } from '@utils'
 import type { VscButtonProps, VscButtonClasses } from './types'
 
@@ -35,6 +45,15 @@ const buttonColor = computed<string>(() => {
   return props.colorTheme ?? 'primary'
 })
 /**
+ * Флаг наличия только одной иконки (слева или справа).
+ */
+const isSetOnlyOneIcon = computed<boolean>(() => {
+  const isSetLeftIcon = !!props.iconLeft
+  const isSetRightIcon = !!props.iconRight
+
+  return !!(Number(isSetLeftIcon) ^ Number(isSetRightIcon))
+})
+/**
  * Список классов кнопки.
  */
 const classes = computed<VscButtonClasses>(() => (
@@ -42,6 +61,7 @@ const classes = computed<VscButtonClasses>(() => (
     'vsc-button_disabled': props.disabled ?? false,
     'vsc-button_elevated': props.elevated ?? false,
     'vsc-button_rounded': props.rounded ?? false,
+    'vsc-button_only-icon': isSetOnlyOneIcon.value && !Boolean(props.text),
     [`vsc-button_${props.buttonStyle}`]: !!props.buttonStyle,
     [`vsc-button_color_${buttonColor.value}`]: true,
   }
@@ -112,6 +132,10 @@ onMounted(() => {
 
   &_rounded {
     border-radius: 50%;
+  }
+
+  &_only-icon {
+    padding: var(--vsc-indent-half);
   }
 
   &_color_primary {

@@ -45,7 +45,20 @@ describe('useIconLoader: Корректная работа функции getIco
     expect(fetchSpy).toHaveBeenCalledWith('/icons/home.svg')
   })
 
-  // Загрузка из кэша.
+  it('Вызывает fetch только один раз, всё остальное загружается из кэша.', async () => {
+        fetchSpy.mockResolvedValueOnce({
+      ok: true,
+      text: async () => svgIcon
+    })
+
+    const { getIcon } = useIconLoader()
+    
+    await getIcon('public:arrow-left')
+    await getIcon('public:arrow-left')
+    await getIcon('public:arrow-left')
+
+    expect(fetchSpy).toBeCalledTimes(1)
+  })
 })
 
 describe('useIconLoader: Ошибки при работе функции getIcon()', () => {

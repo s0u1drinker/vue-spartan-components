@@ -12,23 +12,20 @@ vi.mock('@/composables/useIconLoader', () => ({
   })
 }))
 
-describe('VscIcon: Контент иконки', () => {
+describe('VscIcon: Корректное отображение иконки', () => {
   let mockParent: HTMLElement
-  let consoleSpy: MockInstance
 
   beforeEach(() => {
     mockParent = document.createElement('button')
     document.body.appendChild(mockParent)
-    consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
   })
 
   afterEach(() => {
-    consoleSpy.mockRestore()
     document.body.removeChild(mockParent)
     vi.clearAllMocks()
   })
 
-  it('Корректное отображение иконки при указании "size" и атрибутов.', async () => {
+  it('При указании "size" и атрибутов.', async () => {
     const size = '1.5rem'
 
     mount(VscIcon, {
@@ -61,7 +58,7 @@ describe('VscIcon: Контент иконки', () => {
     expect(mockParent.querySelector('i')).toBeNull()
   })
 
-  it('Корректное отображение иконки с размерами по умолчанию.', async () => {
+  it('С размерами по умолчанию.', async () => {
     mount(VscIcon, {
       props: {
         iconName: 'mdi:home',
@@ -81,5 +78,99 @@ describe('VscIcon: Контент иконки', () => {
       expect(svg.getAttribute('width')).toBe('1rem')
       expect(svg.getAttribute('height')).toBe('1rem')
     }
+  })
+})
+
+describe('VscIcon: Ошибки', () => {
+  let consoleSpy: MockInstance
+  let mockUseTemplateRef: MockInstance = vi.fn()
+
+  beforeEach(() => {
+    consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.resetModules()
+  })
+
+  afterEach(() => {
+    consoleSpy.mockRestore()
+    vi.clearAllMocks()
+  })
+
+  vi.doMock('vue', async (importOriginal) => {
+    const actual = await (importOriginal() as any)
+    
+    return {
+      ...actual,
+      useTemplateRef: mockUseTemplateRef
+    }
+  })
+
+  it('Не найден родительский элемент.', async () => {
+    const orphanElement = document.createElement('i')
+    
+    mockUseTemplateRef.mockReturnValue({ 
+      value: orphanElement
+    })
+    
+    const { default: VscIconLocal } = await import('./VscIcon.vue')
+
+    mount(VscIconLocal, {
+      props: {
+        iconName: 'mdi:file',
+      }
+    })
+
+    await flushPromises()
+
+    expect(consoleSpy).toHaveBeenCalledWith('Не найден родитель для элемента.')
+  })
+
+  it('Не найден элемент с ref="icon".', async () => {
+    mockUseTemplateRef.mockReturnValue({ 
+      value: null
+    })
+    
+    const { default: VscIconLocal } = await import('./VscIcon.vue')
+
+    mount(VscIconLocal, {
+      props: {
+        iconName: 'mdi:file',
+      }
+    })
+
+    await flushPromises()
+
+    expect(consoleSpy).toHaveBeenCalledWith('Не найден элемент с ref="icon".')
+  })
+
+  const mockGetIconWithoutSvg: MockInstance = vi.fn()
+
+  vi.doMock('@/composables/useIconLoader', () => ({
+    useIconLoader: () => ({
+      getIcon: mockGetIconWithoutSvg
+    })
+  }))
+
+  it('Не смог найти тег <svg>.', async () => {
+    const mockIconElement = document.createElement('i')
+    const mockParent = document.createElement('div')
+    
+    mockParent.appendChild(mockIconElement)
+    mockGetIconWithoutSvg.mockResolvedValue('<div>Not an SVG</div>')
+    
+    mockUseTemplateRef.mockReturnValue({ 
+      value: mockIconElement
+    })
+
+    const { default: VscIconLocal } = await import('./VscIcon.vue')
+
+    mount(VscIconLocal, {
+      props: {
+        iconName: 'mdi:file',
+      }
+    })
+
+    await flushPromises()
+
+    expect(consoleSpy).toHaveBeenCalledWith('Не смог найти тег <svg>.')
   })
 })

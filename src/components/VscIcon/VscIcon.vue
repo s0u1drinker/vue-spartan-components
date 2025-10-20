@@ -17,7 +17,11 @@ const attrs = useAttrs()
 const iconRef = useTemplateRef<HTMLElement>('icon')
 
 onMounted(async () => {
-  if (!iconRef.value) return
+  if (!iconRef.value) {
+    console.error('Не найден элемент с ref="icon".')
+
+    return
+  }
 
   const parent = iconRef.value.parentElement
 

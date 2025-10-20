@@ -1,4 +1,5 @@
 import type { ColorThemes, VscCustomColorTheme } from '@types'
+import type { IconName } from '@components/VscIcon/types'
 
 export type VscButtonClasses = Record<`vsc-button_${string}`, boolean>
 
@@ -15,7 +16,7 @@ export interface VscButtonProps {
   rounded?: true,
   text?: string,
   ariaLabel?: string,
-  iconLeft?: string,
-  iconRight?: string,
+  iconLeft?: IconName,
+  iconRight?: IconName,
   style?: never,
 }

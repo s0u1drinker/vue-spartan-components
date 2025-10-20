@@ -28,6 +28,7 @@ export default defineConfig({
     },
   },
   build: {
+    copyPublicDir: false,
     lib: {
       entry: resolve(import.meta.dirname, 'src/index.ts'),
       name: 'VueSpartanComponents',

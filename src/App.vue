@@ -5,13 +5,11 @@ import { VscButton, VscIcon } from '@/components'
 <template>
   <h1>Hello!</h1>
   <VscButton
-    text="Click me!"
+    text="Прикрепить"
     :elevated="true"
+    icon-right="public:attach-file"
     @click="() => { console.log('Click!') }"
-  >
-    <VscIcon icon-name="public:attach-file" />
-    <span>Прикрепить</span>
-  </VscButton>
+  />
   <VscIcon icon-name="public:attach-file" />
 </template>
 

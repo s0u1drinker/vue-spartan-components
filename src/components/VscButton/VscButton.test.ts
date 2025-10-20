@@ -1,6 +1,15 @@
 import { describe, it, expect, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import VscButton from './VscButton.vue'
+
+const svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"/></svg>'
+const mockGetIcon = vi.fn().mockResolvedValue(svgIcon)
+
+vi.mock('@/composables/useIconLoader', () => ({
+  useIconLoader: () => ({
+    getIcon: mockGetIcon
+  })
+}))
 
 describe('VscButton: Контент кнопки', () => {
   it('Отображение кнопки с текстом.', () => {
@@ -48,7 +57,55 @@ describe('VscButton: Контент кнопки', () => {
     expect(span.text()).toBe('Отмена')
   })
 
-  // TODO: После добавления компонента VscIcon необходимо дописать тесты для проверки отображения иконок.
+  it('Отображение иконки с текстом.', async () => {
+    const telegramWrapper = mount(VscButton, {
+      props: {
+        text: 'Telegram',
+        iconLeft: 'tabler:brand-telegram',
+      }
+    })
+
+    const whatsappButton = mount(VscButton, {
+      props: {
+        text: 'Whatsapp',
+        iconRight: 'tabler:brand-whatsapp',
+      }
+    })
+
+    await flushPromises()
+
+    expect(telegramWrapper.find('svg').exists()).toBe(true)
+    expect(telegramWrapper.find('span').exists()).toBe(true)
+    expect(telegramWrapper.text()).toBe('Telegram')
+    expect(whatsappButton.find('svg').exists()).toBe(true)
+    expect(whatsappButton.find('span').exists()).toBe(true)
+    expect(whatsappButton.text()).toBe('Whatsapp')
+  })
+
+  it('Отображение иконки без текста.', async () => {
+    const xButton = mount(VscButton, {
+      props: {
+        iconLeft: 'tabler:brand-x',
+        ariaLabel: 'x.com',
+      }
+    })
+
+    const youtubeButton = mount(VscButton, {
+      props: {
+        iconRight: 'tabler:brand-youtube',
+        ariaLabel: 'youtube.com'
+      }
+    })
+
+    await flushPromises()
+
+    expect(xButton.find('svg').exists()).toBe(true)
+    expect(xButton.find('span').exists()).toBe(false)
+    expect(xButton.text()).toBe('')
+    expect(youtubeButton.find('svg').exists()).toBe(true)
+    expect(youtubeButton.find('span').exists()).toBe(false)
+    expect(youtubeButton.text()).toBe('')
+  })
 })
 
 describe('VscButton: Атрибут "aria-label"', () => {
@@ -78,7 +135,7 @@ describe('VscButton: Атрибут "aria-label"', () => {
 
     mount(VscButton, {
       props: {
-        iconLeft: 'heart'
+        iconLeft: 'public:attach-file'
       }
     })
 
@@ -104,6 +161,7 @@ describe('VscButton: Атрибут "disabled"', () => {
     })
 
     expect(wrapper.classes()).toContain('vsc-button_disabled')
+    expect(wrapper.attributes('aria-disabled')).toBe('true')
   })
 
   it('Вызывает событие click, если "disabled" не установлен.', async () => {
@@ -198,5 +256,22 @@ describe('VscButton: Стилевое оформление', () => {
     expect(wrapper.classes()).toContain('vsc-button_color_custom')
     expect(setVarsForCustomColorTheme).toHaveBeenCalledTimes(1)
     expect(setVarsForCustomColorTheme).toHaveBeenCalledWith(customColorTheme, wrapper.find('button').element)
+  })
+
+  it('Применение класса vsc-button_only-icon, если в содержимом только одна иконка.', () => {
+    const wrapperIconLeft = mount(VscButton, {
+      props: {
+        iconLeft: 'mdi:battery'
+      }
+    })
+
+    const wrapperIconRight = mount(VscButton, {
+      props: {
+        iconRight: 'mdi:airplane'
+      }
+    })
+
+    expect(wrapperIconLeft.classes()).toContain('vsc-button_only-icon')
+    expect(wrapperIconRight.classes()).toContain('vsc-button_only-icon')
   })
 })

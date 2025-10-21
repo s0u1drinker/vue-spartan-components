@@ -10,8 +10,8 @@ import { VscButton, VscIcon } from '@/components'
     icon-right="public:attach-file"
     @click="() => { console.log('Click!') }"
   />
-  <VscIcon icon-name="public:attach-file" />
+  <p><VscIcon icon-name="public:attach-file" /> Прикрепите какой-нибудь файл.</p>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 </style>

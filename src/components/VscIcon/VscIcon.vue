@@ -60,4 +60,4 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss"></style>

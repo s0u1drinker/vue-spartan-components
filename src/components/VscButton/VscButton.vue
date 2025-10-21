@@ -98,7 +98,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @use "sass:color";
 
 .vsc-button {

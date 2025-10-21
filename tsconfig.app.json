@@ -32,10 +32,12 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "composite": true,
     "declaration": true,
+    "emitDeclarationOnly": false,
     "declarationMap": true,
     "outDir": "./dist",
-    "emitDeclarationOnly": true
+    "rootDir": "./src",
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.d.ts"]
 }

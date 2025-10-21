@@ -2,9 +2,18 @@ import { defineConfig } from 'vite'
 import { resolve } from 'path'
 import vue from '@vitejs/plugin-vue'
 import autoprefixer from 'autoprefixer'
+import dts from 'vite-plugin-dts'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    dts({
+      tsconfigPath: './tsconfig.app.json',
+      rollupTypes: true,
+      entryRoot: './src',
+      outDir: './dist'
+    })
+  ],
   resolve: {
     alias: {
       '#': resolve(import.meta.dirname, 'public'),

@@ -1,0 +1,42 @@
+@use 'sass:map';
+@use './functions.scss' as *;
+// "Базовые" переменные.
+$vsc-base: (
+  // Цвета.
+  'black': #000,
+  'white': #fff,
+  // Градация серого:
+  'gray-100': #f8f9fa,
+  'gray-200': #e9ecef,
+  'gray-300': #dee2e6,
+  'gray-400': #ced4da,
+  'gray-500': #adb5bd,
+  'gray-600': #6c757d,
+  'gray-700': #495057,
+  'gray-800': #343a40,
+  'gray-900': #212529,
+  // Отступы:
+  'indent': 1rem,
+  'indent-half': calc(var(--vsc-indent) / 2),
+  'indent-quarter': calc(var(--vsc-indent) / 4),
+  'indent-double': calc(var(--vsc-indent) * 2),
+  // Общие стили:
+  'border': 2px solid,
+  'border-radius': 4px,
+  'box-shadow': 0px 4px 8px 0px rgba(0, 0, 0, 0.35),
+  'transition': .3s ease-out,
+  'focus': 2px solid #000,
+);
+// Цвета для генерации оттенков.
+$vsc-colors: (
+  // Основные:
+  'primary': #007bff,
+  'accent': #6f42c1,
+  // Статусы:
+  'success': #28a745,
+  'error': #dc3545,
+  'warning': #ffc107,
+  'info': #17a2b8,
+);
+// Карта переменных.
+$vsc-variables: map.merge($vsc-base, calculate-color-variables($vsc-colors));

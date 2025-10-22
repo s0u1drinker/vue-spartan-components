@@ -1,46 +1,7 @@
-@use './variables' as *;
+@use './variables-map' as *;
 
 :root {
-  --vsc-indent: #{$vsc-indent};
-  --vsc-indent-half: #{$vsc-indent-half};
-  --vsc-indent-quarter: #{$vsc-indent-quarter};
-  --vsc-indent-double: #{$vsc-indent-double};
-  --vsc-black: #{$vsc-black};
-  --vsc-white: #{$vsc-white};
-  --vsc-primary: #{$vsc-primary};
-  --vsc-primary-dark: #{$vsc-primary-dark};
-  --vsc-primary-light: #{$vsc-primary-light};
-  --vsc-accent: #{$vsc-accent};
-  --vsc-accent-dark: #{$vsc-accent-dark};
-  --vsc-accent-light: #{$vsc-accent-light};
-  --vsc-success: #{$vsc-success};
-  --vsc-success-dark: #{$vsc-success-dark};
-  --vsc-success-light: #{$vsc-success-light};
-  --vsc-error: #{$vsc-error};
-  --vsc-error-dark: #{$vsc-error-dark};
-  --vsc-error-light: #{$vsc-error-light};
-  --vsc-warning: #{$vsc-warning};
-  --vsc-warning-dark: #{$vsc-warning-dark};
-  --vsc-warning-light: #{$vsc-warning-light};
-  --vsc-info: #{$vsc-info};
-  --vsc-info-dark: #{$vsc-info-dark};
-  --vsc-info-light: #{$vsc-info-light};
-  --vsc-custom-bg: #{$vsc-primary};
-  --vsc-custom-txt: #{$vsc-white};
-  --vsc-custom-bg-dark: #{$vsc-primary-dark};
-  --vsc-custom-bg-light: #{$vsc-primary-light};
-  --vsc-gray-100: #{$vsc-gray-100};
-  --vsc-gray-200: #{$vsc-gray-200};
-  --vsc-gray-300: #{$vsc-gray-300};
-  --vsc-gray-400: #{$vsc-gray-400};
-  --vsc-gray-500: #{$vsc-gray-500};
-  --vsc-gray-600: #{$vsc-gray-600};
-  --vsc-gray-700: #{$vsc-gray-700};
-  --vsc-gray-800: #{$vsc-gray-800};
-  --vsc-gray-900: #{$vsc-gray-900};
-  --vsc-border: #{$vsc-border};
-  --vsc-border-radius: #{$vsc-border-radius};
-  --vsc-box-shadow: #{$vsc-box-shadow};
-  --vsc-transition: #{$vsc-transition};
-  --vsc-focus: #{$vsc-focus};
+  @each $name, $value in $vsc-variables {
+    --vsc-#{$name}: #{$value};
+  }
 }

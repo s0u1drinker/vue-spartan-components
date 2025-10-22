@@ -1,0 +1,30 @@
+@use 'sass:color';
+@use 'sass:map';
+// Генерация переменных с цветом.
+@function calculate-color-variables($colors) {
+  $colors-map: ();
+
+  @each $name, $value in $colors {
+    $colors-map: map.merge($colors-map, get-color-palette($name, $value));
+  }
+
+  @return $colors-map;
+}
+// Генерация палитры для конкретного цвета.
+@function get-color-palette($name, $value) {
+  @return (
+    #{$name}: $value,
+    #{$name}-dark: get-variation($value, 'dark'),
+    #{$name}-light: get-variation($value, 'light'),
+  );
+}
+// Генерация "dark" и "light" вариаций.
+@function get-variation($color, $type: 'dark') {
+  @if $type == 'dark' {
+    @return color.scale($color, $lightness: -20%);
+  } @else if $type == 'light' {
+    @return color.scale($color, $lightness: 80%);
+  } @else {
+    @error 'Неверный тип вариации цвета.';
+  }
+}

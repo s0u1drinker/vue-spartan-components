@@ -102,6 +102,12 @@ onMounted(() => {
 @use "sass:color";
 
 .vsc-button {
+  --vsc-button-gap: var(--vsc-indent-quarter);
+  --vsc-button-padding: var(--vsc-indent-half) var(--vsc-indent);
+  --vsc-button-padding-only-icon: var(--vsc-indent-half);
+  --vsc-button-border: var(--vsc-border) transparent;
+  --vsc-button-border-radius: var(--vsc-border-radius);
+
   display: inline-flex;
   align-items: center;
   justify-content: center;

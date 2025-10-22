@@ -4,8 +4,4 @@
   @each $name, $value in $vsc-variables {
     --vsc-#{$name}: #{$value};
   }
-  // Отступы:
-  --vsc-indent-half: calc(var(--vsc-indent) / 2);
-  --vsc-indent-quarter: calc(var(--vsc-indent) / 4);
-  --vsc-indent-double: calc(var(--vsc-indent) * 2);
 }

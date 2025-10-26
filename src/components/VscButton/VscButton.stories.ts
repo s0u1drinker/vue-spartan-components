@@ -96,10 +96,22 @@ export const ButtonWithIcon: Story = {
 
 export const ButtonWithOptions: Story = {
   name: 'С настройками',
+  render: (args) => ({
+    components: { VscButton },
+    setup() {
+      return { args };
+    },
+    template: `<div style="display:flex;gap:1rem;">
+      <VscButton v-bind="args" iconLeft="public:attach-file" aria-label="Прикрепить" buttonStyle="outline" />
+      <VscButton v-bind="args" text="Кнопка" />
+      </div>`,
+  }),
   args: {
-    text: 'Кнопка',
     elevated: true,
     rounded: true,
     disabled: false,
+    onClick: () => {
+      console.log('click');
+    },
   },
 };

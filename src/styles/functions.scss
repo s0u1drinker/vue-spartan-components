@@ -11,20 +11,10 @@
   @return $colors-map;
 }
 // Генерация палитры для конкретного цвета.
-@function get-color-palette($name, $value) {
+@function get-color-palette($name, $color) {
   @return (
-    #{$name}: $value,
-    #{$name}-dark: get-variation($value, 'dark'),
-    #{$name}-light: get-variation($value, 'light'),
+    #{$name}: $color,
+    #{$name}-dark: hsl(from $color h s 35%),
+    #{$name}-light: hsl(from $color h s 90%),
   );
-}
-// Генерация "dark" и "light" вариаций.
-@function get-variation($color, $type: 'dark') {
-  @if $type == 'dark' {
-    @return color.scale($color, $lightness: -20%);
-  } @else if $type == 'light' {
-    @return color.scale($color, $lightness: 80%);
-  } @else {
-    @error 'Неверный тип вариации цвета.';
-  }
 }

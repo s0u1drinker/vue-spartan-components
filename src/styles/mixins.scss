@@ -1,18 +1,17 @@
 @mixin disabled {
   cursor: not-allowed;
-  pointer-events: none;
-  opacity: .15;
+  opacity: .35;
 }
 
 @mixin hover {
   @media (hover: hover) {
-    &:hover {
+    &:hover:not(:disabled) {
       @content;
     }
   }
 
   @media (hover: none) {
-    &:active {
+    &:active:not(:disabled) {
       @content;
     }
   }

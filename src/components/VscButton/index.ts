@@ -1,1 +1,1 @@
-export { default as VscButton } from './VscButton.vue'
+export { default as VscButton } from './VscButton.vue';

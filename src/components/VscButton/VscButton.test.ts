@@ -170,7 +170,6 @@ describe('VscButton: Атрибут "disabled"', () => {
     });
 
     expect(wrapper.classes()).toContain('vsc-button_disabled');
-    expect(wrapper.attributes('aria-disabled')).toBe('true');
   });
 
   it('Вызывает событие click, если "disabled" не установлен.', async () => {

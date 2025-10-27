@@ -41,5 +41,6 @@ export const TextWithIcon: Story = {
   }),
   args: {
     iconName: 'mdi:alien',
+    iconColor: 'red',
   },
 };

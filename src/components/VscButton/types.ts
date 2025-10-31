@@ -18,5 +18,6 @@ export interface VscButtonProps {
   ariaLabel?: string;
   iconLeft?: IconName;
   iconRight?: IconName;
+  iconColor?: string;
   style?: never;
 }

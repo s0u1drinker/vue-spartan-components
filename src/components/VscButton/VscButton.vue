@@ -9,9 +9,17 @@
     @click="handleClick"
   >
     <slot>
-      <VscIcon :icon-name="props.iconLeft" v-if="props.iconLeft" />
+      <VscIcon
+        :icon-name="props.iconLeft"
+        :icon-color="props.iconColor"
+        v-if="props.iconLeft"
+      />
       <span v-if="text">{{ text }}</span>
-      <VscIcon :icon-name="props.iconRight" v-if="props.iconRight" />
+      <VscIcon
+        :icon-name="props.iconRight"
+        :icon-color="props.iconColor"
+        v-if="props.iconRight"
+      />
     </slot>
   </button>
 </template>
@@ -103,6 +111,10 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  position: relative;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
   gap: var(--vsc-button-gap);
   padding: var(--vsc-button-padding);
   border: var(--vsc-button-border);
@@ -117,7 +129,7 @@ onMounted(() => {
   }
 
   &:active:not(:disabled) {
-    transform: scale(0.9);
+    transform: scale(0.95);
   }
 
   &_disabled {

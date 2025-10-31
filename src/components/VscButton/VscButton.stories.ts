@@ -82,8 +82,8 @@ export const ButtonWithIcon: Story = {
     },
     template: `<div style="display:flex;gap:1rem;">
       <VscButton v-bind="args" text="" iconLeft="public:attach-file" />
-      <VscButton v-bind="args" iconLeft="mdi:airplane" />
-      <VscButton v-bind="args" iconRight="mdi:fire" buttonStyle="outline" />
+      <VscButton v-bind="args" iconLeft="mdi:airplane" iconColor="rgba(84, 232, 227, 1)" />
+      <VscButton v-bind="args" iconRight="mdi:fire" iconColor="red" buttonStyle="outline" />
       <VscButton v-bind="args" iconLeft="mdi:arrow-top" iconRight="mdi:arrow-top" buttonStyle="plain" />
       </div>`,
   }),

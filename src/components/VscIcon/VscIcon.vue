@@ -1,70 +1,49 @@
 <template>
-  <i ref="icon" style="display: none"></i>
+  <i ref="icon"></i>
 </template>
 
 <script setup lang="ts">
-import { onMounted, useTemplateRef, useAttrs } from 'vue';
-import { useIconLoader } from '@/composables/useIconLoader';
+import { useTemplateRef, useAttrs, ref, watchEffect } from 'vue';
+import { useIconLoader } from './composables/useIconLoader';
 import type { IconProps } from './types';
 
 defineOptions({
   inheritAttrs: false,
 });
 
-const {
-  iconName,
-  size = '1rem',
-  ariaHidden = true,
-  iconColor,
-} = defineProps<IconProps>();
+const props = withDefaults(defineProps<IconProps>(), {
+  size: '1rem',
+  ariaHidden: true,
+});
 const { getIcon } = useIconLoader();
 const attrs = useAttrs();
 const iconRef = useTemplateRef<HTMLElement>('icon');
+const svgContent = ref<string>('');
 
-onMounted(async () => {
-  if (!iconRef.value) {
-    console.error('Не найден элемент с ref="icon".');
+watchEffect(async () => {
+  svgContent.value = await getIcon(props.iconName);
+  // Парсим ответ от сервера. Забираем тег <svg>.
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(svgContent.value, 'image/svg+xml');
+  const svgIcon = doc.querySelector('svg');
+
+  if (!svgIcon) {
+    console.error('Не смог найти тег <svg>.');
 
     return;
   }
-
-  const parent = iconRef.value.parentElement;
-
-  if (!parent) {
-    console.error('Не найден родитель для элемента.');
-
-    return;
-  }
-
-  const svgContent = await getIcon(iconName);
-
-  if (svgContent) {
-    // Парсим ответ от сервера. Забираем тег <svg>.
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(svgContent, 'image/svg+xml');
-    const svgIcon = doc.querySelector('svg');
-
-    if (!svgIcon) {
-      console.error('Не смог найти тег <svg>.');
-
-      return;
-    }
-    // Выставляем размеры.
-    svgIcon.setAttribute('width', size);
-    svgIcon.setAttribute('height', size);
-    // Перекидываем атрибуты.
-    Object.entries(attrs).forEach(([key, value]) => {
-      svgIcon.setAttribute(key, String(value));
-    });
-    // Применяем пропсы.
-    svgIcon.setAttribute('aria-hidden', String(ariaHidden));
-    iconColor && (svgIcon.style.color = iconColor);
-    // Заменяем элемент.
-    parent.replaceChild(svgIcon, iconRef.value);
-  } else {
-    // Если иконка не  загрузилась - удаляем обёртку.
-    parent.removeChild(iconRef.value);
-  }
+  // Выставляем размеры.
+  svgIcon.setAttribute('width', props.size);
+  svgIcon.setAttribute('height', props.size);
+  // Перекидываем атрибуты.
+  Object.entries(attrs).forEach(([key, value]) => {
+    svgIcon.setAttribute(key, String(value));
+  });
+  // Применяем пропсы.
+  svgIcon.setAttribute('aria-hidden', String(props.ariaHidden));
+  props.iconColor && (svgIcon.style.color = props.iconColor);
+  // Заменяем элемент.
+  iconRef.value?.replaceChildren(svgIcon);
 });
 </script>
 

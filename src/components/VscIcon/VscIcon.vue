@@ -1,49 +1,33 @@
 <template>
-  <i ref="icon"></i>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    :style="svgInlineStyle"
+    :width="props.size"
+    :height="props.size"
+    :viewBox
+    :aria-hidden="props.ariaHidden"
+    v-html="iconContent"
+  ></svg>
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef, useAttrs, ref, watchEffect } from 'vue';
-import { useIconLoader } from './composables/useIconLoader';
+import { computed, toRef } from 'vue';
+import { useIcon } from './composables/useIcon';
+import type { StyleValue } from 'vue';
 import type { IconProps } from './types';
-
-defineOptions({
-  inheritAttrs: false,
-});
 
 const props = withDefaults(defineProps<IconProps>(), {
   size: '1rem',
   ariaHidden: true,
 });
-const { getIcon } = useIconLoader();
-const attrs = useAttrs();
-const iconRef = useTemplateRef<HTMLElement>('icon');
-const svgContent = ref<string>('');
+const { viewBox, iconContent } = useIcon(toRef(props, 'iconName'));
+/** Inline-стили SVG-иконки: цвет и т.д. */
+const svgInlineStyle = computed<StyleValue>(() => {
+  if (!props.iconColor) return null;
 
-watchEffect(async () => {
-  svgContent.value = await getIcon(props.iconName);
-  // Парсим ответ от сервера. Забираем тег <svg>.
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(svgContent.value, 'image/svg+xml');
-  const svgIcon = doc.querySelector('svg');
-
-  if (!svgIcon) {
-    console.error('Не смог найти тег <svg>.');
-
-    return;
-  }
-  // Выставляем размеры.
-  svgIcon.setAttribute('width', props.size);
-  svgIcon.setAttribute('height', props.size);
-  // Перекидываем атрибуты.
-  Object.entries(attrs).forEach(([key, value]) => {
-    svgIcon.setAttribute(key, String(value));
-  });
-  // Применяем пропсы.
-  svgIcon.setAttribute('aria-hidden', String(props.ariaHidden));
-  props.iconColor && (svgIcon.style.color = props.iconColor);
-  // Заменяем элемент.
-  iconRef.value?.replaceChildren(svgIcon);
+  return {
+    color: props.iconColor,
+  };
 });
 </script>
 

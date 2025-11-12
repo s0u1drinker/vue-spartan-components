@@ -1,4 +1,7 @@
+import type { Ref } from 'vue';
+
 type IconSize = `${number}px` | `${number}%` | `${number}rem` | `${number}em`;
+
 export type IconName = `${any}${string}:${any}${string}`;
 
 export interface IconProps {
@@ -18,4 +21,9 @@ export interface IconProps {
    * Атрибут "aria-hidden" (опционально). По умолчанию "true".
    */
   ariaHidden?: boolean;
+}
+
+export interface UseIcon {
+  viewBox: Ref<string>;
+  iconContent: Ref<string>;
 }

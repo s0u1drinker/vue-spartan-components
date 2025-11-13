@@ -1,101 +1,103 @@
+import { computed, watchEffect, ref } from 'vue';
+import type { Ref } from 'vue';
+import type {
+  IconName,
+  UseIconLoader,
+  CacheIcon,
+  CachePromise,
+  IconPath,
+} from '../types';
+
 /**
  * Кэш для иконок.
  */
-const cacheIcon = new Map<string, string>()
+const cacheIcon: CacheIcon = new Map();
 /**
  * Кэш промисов.
  */
-const cachePromise = new Map<string, Promise<boolean>>()
+const cachePromise: CachePromise = new Map();
 
-export function useIconLoader() {
-  /**
-   * Возвращает значение из кэша по имени иконки.
-   * @param iconName Наименование иконки.
-   * @returns Значение из кэша или пустая строка.
-   */
-  const getCachedIcon = (iconName: string): string => {
-    return cacheIcon.get(iconName) || ''
-  }
-  /**
-   * Возвращает SVG-иконку по имени.
-   * @param iconName Имя иконки: "prefix:name" - для загрузки из Iconify, "public:name" - из папки.
-   * @returns SVG-иконка.
-   */
-  const getIcon = async (iconName: string): Promise<string> => {
-    if (!iconName) {
-      console.error('Не передано значение переменной.')
+export function useIconLoader(iconName: Ref<IconName>): UseIconLoader {
+  const prefix = ref<string>('');
+  const name = ref<string>('');
+  let wrongData = ref<string[]>([]);
+  /** Сообщение об ошибке. */
+  const loadError = computed((): string => {
+    return !iconName.value
+      ? 'Не передано значение переменной.'
+      : typeof iconName.value !== 'string'
+        ? `Неверный тип переменной (${iconName.value}): ${typeof iconName.value}.`
+        : wrongData.value.length || !prefix.value || !name.value
+          ? `Некорректное название иконки: ${iconName.value}`
+          : '';
+  });
+  /** Разбиваем имя иконки при изменении. */
+  watchEffect(() => {
+    const parts = iconName.value.split(':');
 
-      return ''
-    }
+    prefix.value = parts[0] || '';
+    name.value = parts[1] || '';
+    wrongData.value = parts.slice(2);
+  });
 
-    if (typeof iconName !== 'string') {
-      console.error(`Неверный тип переменной: ${iconName} - ${typeof iconName}.`)
+  /** Путь для загрузки иконки. */
+  const pathToLoadIcon = computed<IconPath | ''>(() => {
+    if (loadError.value) return '';
 
-      return ''
-    }
+    return prefix.value === 'public'
+      ? `/icons/${name.value}.svg`
+      : `https://api.iconify.design/${prefix.value}/${name.value}.svg`;
+  });
 
-    if (cachePromise.has(iconName)) {
-      await cachePromise.get(iconName)
+  /** Возвращает значение из кэша по имени иконки. */
+  const getIconFromCache = (): string => {
+    return cacheIcon.get(iconName.value) || '';
+  };
+  /** Возвращает SVG-иконку по имени: "prefix:name" - для загрузки из Iconify, "public:name" - из папки. */
+  const getIcon = async (): Promise<string> => {
+    if (cachePromise.has(iconName.value)) {
+      await cachePromise.get(iconName.value);
     } else {
-      if (!cacheIcon.has(iconName)) {
-        const [ prefix, name, ...wrongData ] = iconName.split(':')
-
-        if (wrongData.length || !prefix || !name) {
-          console.error(`Некорректное название иконки: ${iconName}`)
-
-          return ''
-        }
-
-        await loadIconToCache(prefix, name)
+      if (!cacheIcon.has(iconName.value)) {
+        await loadIconToCache();
       }
     }
 
-    return getCachedIcon(iconName)
-  }
-  /**
-   * Загружает SVG-иконку и добавляет в кэш.
-   * @param prefix Название библиотеки.
-   * @param name Наименование SVG-иконки.
-   * @returns Результат загрузки.
-   */
-  const loadIconToCache = async (prefix: string, name: string): Promise<boolean> => {
-    if (!prefix || !name) {
-      console.error(`Не переданы данные для загрузки иконки. Префикс: ${prefix}. Наименование: ${name}.`)
-
-      return false
-    }
-
-    const fullIconName = `${prefix}:${name}`
-    const path = (prefix === 'public') ? `/icons/${name}.svg` : `https://api.iconify.design/${prefix}/${name}.svg`
-
-    const promise = fetch(path)
-      .then((response) => {
+    return getIconFromCache();
+  };
+  /** Загружает SVG-иконку и добавляет в кэш. */
+  const loadIconToCache = async (): Promise<boolean> => {
+    const promise = fetch(pathToLoadIcon.value)
+      .then((response: Response) => {
         if (!response.ok) {
-          throw new Error(`Не получилось загрузить иконку с именем "${fullIconName}". Статус: ${response.status}`)
+          throw new Error(
+            `Не получилось загрузить иконку с именем "${iconName.value}". Статус: ${response.status}`
+          );
         }
 
-        return response.text()
+        return response.text();
       })
-      .then((svgContent) => {
-        cacheIcon.set(fullIconName, svgContent)
+      .then((svgContent: string) => {
+        cacheIcon.set(iconName.value, svgContent);
 
-        return true
+        return true;
       })
-      .catch(error => {
-        console.error(error)
+      .catch((error: string) => {
+        console.error(error);
 
-        return false
+        return false;
       })
       .finally(() => {
-        cachePromise.delete(fullIconName)
-      })
+        cachePromise.delete(iconName.value);
+      });
 
-    cachePromise.set(fullIconName, promise)
+    cachePromise.set(iconName.value, promise);
 
-    return await promise
-  }
+    return await promise;
+  };
 
   return {
-    getIcon
-  }
+    getIcon,
+    loadError,
+  };
 }

@@ -1,4 +1,4 @@
-import type { Ref } from 'vue';
+import type { ComputedRef, Ref } from 'vue';
 
 type IconSize = `${number}px` | `${number}%` | `${number}rem` | `${number}em`;
 
@@ -27,3 +27,15 @@ export interface UseIcon {
   viewBox: Ref<string>;
   iconContent: Ref<string>;
 }
+
+export interface UseIconLoader {
+  getIcon: () => Promise<string>;
+  loadError: ComputedRef<string>;
+}
+
+export type CacheIcon = Map<IconName, string>;
+export type CachePromise = Map<IconName, Promise<boolean>>;
+
+export type IconPath =
+  | `/icons/${string}.svg`
+  | `https://api.iconify.design/${string}/${string}.svg`;

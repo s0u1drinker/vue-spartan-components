@@ -8,7 +8,7 @@ import type { IconName, UseIcon } from '../types';
  * @returns Параметр viewBox и содержимое иконки (path...).
  */
 export function useIcon(iconName: Ref<IconName>): UseIcon {
-  const { getIcon } = useIconLoader();
+  const { getIcon, loadError } = useIconLoader(iconName);
   /** Размеры области просмотра SVG-иконки. */
   const viewBox = ref<string>('0 0 24 24');
   /** Содержимое SVG-иконки. */
@@ -36,7 +36,11 @@ export function useIcon(iconName: Ref<IconName>): UseIcon {
    */
   async function getIconContent(): Promise<SVGElement | null> {
     try {
-      const response = await getIcon(iconName.value);
+      if (loadError.value) {
+        throw new Error(loadError.value);
+      }
+
+      const response = await getIcon();
       // Парсим ответ от сервера. Забираем SVG-элемент.
       const parser = new DOMParser();
       const doc = parser.parseFromString(response, 'image/svg+xml');
@@ -48,7 +52,7 @@ export function useIcon(iconName: Ref<IconName>): UseIcon {
 
       return svgElement;
     } catch (e) {
-      console.error('Не удалось получить иконку:', e);
+      console.error('Ошибка при загрузке иконки:', e);
 
       return null;
     }

@@ -1,128 +1,134 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { useIconLoader } from './useIconLoader'
-import type { MockInstance } from 'vitest'
+import { ref } from 'vue';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { useIconLoader } from './useIconLoader';
+import type { MockInstance } from 'vitest';
+import type { IconName } from '../types';
 
-const svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20.56 3.91c.59.59.59 1.54 0 2.12l-3.89 3.89l2.12 9.19l-1.41 1.42l-3.88-7.43L9.6 17l.36 2.47l-1.07 1.06l-1.76-3.18l-3.19-1.77L5 14.5l2.5.37L11.37 11L3.94 7.09l1.42-1.41l9.19 2.12l3.89-3.89c.56-.58 1.56-.58 2.12 0"/></svg>'
+const svgIcon =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20.56 3.91c.59.59.59 1.54 0 2.12l-3.89 3.89l2.12 9.19l-1.41 1.42l-3.88-7.43L9.6 17l.36 2.47l-1.07 1.06l-1.76-3.18l-3.19-1.77L5 14.5l2.5.37L11.37 11L3.94 7.09l1.42-1.41l9.19 2.12l3.89-3.89c.56-.58 1.56-.58 2.12 0"/></svg>';
 
-describe('useIconLoader: Корректная работа функции getIcon()', () => {
-  let consoleSpy: MockInstance
-  let fetchSpy: MockInstance
+describe('useIconLoader: Корректная загрузка иконки', () => {
+  let consoleSpy: MockInstance;
+  let fetchSpy: MockInstance;
 
   beforeEach(() => {
-    consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    fetchSpy = vi.spyOn(global, 'fetch')
-  })
+    consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    fetchSpy = vi.spyOn(global, 'fetch');
+  });
 
   afterEach(() => {
-    consoleSpy.mockRestore()
-    fetchSpy.mockRestore()
-    vi.clearAllMocks()
-  })
+    consoleSpy.mockRestore();
+    fetchSpy.mockRestore();
+    vi.clearAllMocks();
+  });
 
   it('Загружает иконку из Iconify.', async () => {
     fetchSpy.mockResolvedValueOnce({
       ok: true,
-      text: async () => svgIcon
-    })
+      text: async () => svgIcon,
+    });
 
-    const { getIcon } = useIconLoader()
+    const iconName = ref<IconName>('mdi:alarm-check');
+    const { getIcon } = useIconLoader(iconName);
 
-    await getIcon('mdi:alarm-check')
+    await getIcon();
 
-    expect(fetchSpy).toHaveBeenCalledWith('https://api.iconify.design/mdi/alarm-check.svg')
-  })
+    expect(fetchSpy).toHaveBeenCalledWith(
+      'https://api.iconify.design/mdi/alarm-check.svg'
+    );
+  });
 
   it('Загружает иконку из папки /icons.', async () => {
     fetchSpy.mockResolvedValueOnce({
       ok: true,
-      text: async () => svgIcon
-    })
+      text: async () => svgIcon,
+    });
 
-    const { getIcon } = useIconLoader()
-    
-    await getIcon('public:home')
+    const iconName = ref<IconName>('public:home');
+    const { getIcon } = useIconLoader(iconName);
 
-    expect(fetchSpy).toHaveBeenCalledWith('/icons/home.svg')
-  })
+    await getIcon();
+
+    expect(fetchSpy).toHaveBeenCalledWith('/icons/home.svg');
+  });
 
   it('Вызывает fetch только один раз, всё остальное загружается из кэша.', async () => {
-        fetchSpy.mockResolvedValueOnce({
+    fetchSpy.mockResolvedValueOnce({
       ok: true,
-      text: async () => svgIcon
-    })
+      text: async () => svgIcon,
+    });
 
-    const { getIcon } = useIconLoader()
-    
-    await getIcon('public:arrow-left')
-    await getIcon('public:arrow-left')
-    await getIcon('public:arrow-left')
+    const iconName = ref<IconName>('public:arrow-left');
+    const { getIcon } = useIconLoader(iconName);
 
-    expect(fetchSpy).toBeCalledTimes(1)
-  })
-})
+    await getIcon();
+    await getIcon();
+    await getIcon();
 
-describe('useIconLoader: Ошибки при работе функции getIcon()', () => {
-  let consoleSpy: MockInstance
+    expect(fetchSpy).toBeCalledTimes(1);
+  });
+});
 
-  beforeEach(() => {
-    consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-  })
-
-  afterEach(() => {
-    consoleSpy.mockRestore()
-    vi.clearAllMocks()
-  })
-
+describe('useIconLoader: Ошибки при загрузке иконки', () => {
   it('Не передано значение.', async () => {
-    const { getIcon } = useIconLoader()
     // @ts-ignore
-    await getIcon()
+    const { getIcon, loadError } = useIconLoader();
 
-    expect(consoleSpy).toHaveBeenCalledWith('Не передано значение переменной.')
-  })
+    await getIcon();
+
+    expect(loadError.value).toBe('Не передано значение переменной.');
+  });
 
   it('Неверный тип.', async () => {
-    const wrongIconName = ['public:sun']
-    const wrongType = typeof wrongIconName
+    const wrongIconName = ref<string[]>(['public:sun']);
+    const wrongType = typeof wrongIconName;
 
-    const { getIcon } = useIconLoader()
     // @ts-ignore
-    await getIcon(wrongIconName)
+    const { getIcon, loadError } = useIconLoader(wrongIconName);
 
-    expect(consoleSpy).toHaveBeenCalledWith(`Неверный тип переменной: ${wrongIconName} - ${wrongType}.`)
-  })
+    await getIcon();
+
+    expect(loadError.value).toBe(
+      `Неверный тип переменной (${wrongIconName.value}): ${wrongType}.`
+    );
+  });
 
   it('Название иконки.', async () => {
-    const wrongIconName = 'public:'
+    // @ts-ignore
+    const wrongIconName = ref<IconName>('public:');
+    const { getIcon, loadError } = useIconLoader(wrongIconName);
 
-    const { getIcon } = useIconLoader()
-    
-    await getIcon(wrongIconName)
+    await getIcon();
 
-    expect(consoleSpy).toHaveBeenCalledWith(`Некорректное название иконки: ${wrongIconName}`)
-  })
+    expect(loadError.value).toBe(
+      `Некорректное название иконки: ${wrongIconName.value}`
+    );
+  });
 
   it('Иконка не найдена.', async () => {
-    const iconName = 'public:file'
-    const fetchStatus = 404
-    let fetchSpy: MockInstance = vi.spyOn(global, 'fetch')
+    const iconName = ref<IconName>('public:file');
+    const fetchStatus = 404;
+    let consoleSpy: MockInstance = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    let fetchSpy: MockInstance = vi.spyOn(global, 'fetch');
 
     fetchSpy.mockResolvedValue({
       ok: false,
-      status: fetchStatus
-    })
+      status: fetchStatus,
+    });
 
-    const { getIcon } = useIconLoader()
-    
-    await getIcon(iconName)
+    const { getIcon } = useIconLoader(iconName);
 
-    expect(fetchSpy).toHaveBeenCalledWith('/icons/file.svg')
+    await getIcon();
+
+    expect(fetchSpy).toHaveBeenCalledWith('/icons/file.svg');
     expect(consoleSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        message: `Не получилось загрузить иконку с именем "${iconName}". Статус: ${fetchStatus}`
+        message: `Не получилось загрузить иконку с именем "${iconName.value}". Статус: ${fetchStatus}`,
       })
-    )
+    );
 
-    fetchSpy.mockRestore()
-  })
-})
+    fetchSpy.mockRestore();
+  });
+});

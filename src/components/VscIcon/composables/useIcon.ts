@@ -1,4 +1,4 @@
-import { ref, watchEffect } from 'vue';
+import { ref, watch } from 'vue';
 import { useIconLoader } from './useIconLoader';
 import type { Ref } from 'vue';
 import type { IconName, UseIcon } from '../types';
@@ -14,8 +14,9 @@ export function useIcon(iconName: Ref<IconName>): UseIcon {
   /** Содержимое SVG-иконки. */
   const iconContent = ref<string>('');
 
-  watchEffect(async () => {
-    try {
+  watch(
+    iconName,
+    async () => {
       const iconElement = await getIconContent();
 
       if (iconElement) {
@@ -25,11 +26,12 @@ export function useIcon(iconName: Ref<IconName>): UseIcon {
         iconElementViewBox && (viewBox.value = iconElementViewBox);
         // И копируем содержимое (иконку).
         iconContent.value = iconElement.innerHTML;
+      } else {
+        console.error('Не удалось получить SVG-контент.');
       }
-    } catch (e) {
-      console.error('Не удалось получить SVG-контент:', e);
-    }
-  });
+    },
+    { immediate: true }
+  );
   /**
    * Получает SVG-иконку из кэша.
    * @returns SVG-элемент или null.
@@ -41,18 +43,21 @@ export function useIcon(iconName: Ref<IconName>): UseIcon {
       }
 
       const response = await getIcon();
-      // Парсим ответ от сервера. Забираем SVG-элемент.
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(response, 'image/svg+xml');
-      const svgElement = doc.querySelector('svg');
+      // Вставляем ответ от сервера во временный div.
+      const div = document.createElement('div');
+      div.insertAdjacentHTML('beforeend', response);
+      // Забираем SVG-элемент.
+      const svgElement = div.querySelector('svg');
 
       if (!svgElement) {
         throw new Error('Не смог найти тег <svg>.');
       }
 
       return svgElement;
-    } catch (e) {
-      console.error('Ошибка при загрузке иконки:', e);
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : e;
+
+      console.error('Ошибка при загрузке иконки:', errorMessage);
 
       return null;
     }

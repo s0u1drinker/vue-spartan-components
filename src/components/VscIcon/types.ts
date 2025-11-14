@@ -1,4 +1,4 @@
-import type { ComputedRef, Ref } from 'vue';
+import type { Ref } from 'vue';
 
 type IconSize = `${number}px` | `${number}%` | `${number}rem` | `${number}em`;
 
@@ -30,7 +30,7 @@ export interface UseIcon {
 
 export interface UseIconLoader {
   getIcon: () => Promise<string>;
-  loadError: ComputedRef<string>;
+  loadError: Ref<string>;
 }
 
 export type CacheIcon = Map<IconName, string>;

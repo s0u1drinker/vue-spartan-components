@@ -20,29 +20,33 @@ const cachePromise: CachePromise = new Map();
 export function useIconLoader(iconName: Ref<IconName>): UseIconLoader {
   const prefix = ref<string>('');
   const name = ref<string>('');
-  let wrongData = ref<string[]>([]);
-  /** Сообщение об ошибке. */
-  const loadError = computed((): string => {
-    return !iconName.value
-      ? 'Не передано значение переменной.'
-      : typeof iconName.value !== 'string'
-        ? `Неверный тип переменной (${iconName.value}): ${typeof iconName.value}.`
-        : wrongData.value.length || !prefix.value || !name.value
-          ? `Некорректное название иконки: ${iconName.value}`
-          : '';
-  });
-  /** Разбиваем имя иконки при изменении. */
-  watchEffect(() => {
-    const parts = iconName.value.split(':');
+  let loadError = ref<string>('');
 
-    prefix.value = parts[0] || '';
-    name.value = parts[1] || '';
-    wrongData.value = parts.slice(2);
+  watchEffect(() => {
+    loadError.value =
+      !iconName || !iconName.value
+        ? 'Не передано значение переменной.'
+        : typeof iconName.value !== 'string'
+          ? `Неверный тип переменной (${iconName.value}): ${typeof iconName.value}.`
+          : '';
+
+    if (!loadError.value) {
+      const parts = iconName.value.split(':');
+
+      if (parts.length !== 2 || !parts[1] || !parts[0]) {
+        loadError.value = `Некорректное название иконки: ${iconName.value}`;
+      } else {
+        prefix.value = parts[0] || '';
+        name.value = parts[1] || '';
+      }
+    }
   });
 
   /** Путь для загрузки иконки. */
   const pathToLoadIcon = computed<IconPath | ''>(() => {
-    if (loadError.value) return '';
+    if (loadError.value) {
+      return '';
+    }
 
     return prefix.value === 'public'
       ? `/icons/${name.value}.svg`
@@ -55,6 +59,10 @@ export function useIconLoader(iconName: Ref<IconName>): UseIconLoader {
   };
   /** Возвращает SVG-иконку по имени: "prefix:name" - для загрузки из Iconify, "public:name" - из папки. */
   const getIcon = async (): Promise<string> => {
+    if (loadError.value) {
+      return '';
+    }
+
     if (cachePromise.has(iconName.value)) {
       await cachePromise.get(iconName.value);
     } else {

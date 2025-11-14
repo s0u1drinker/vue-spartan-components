@@ -1,38 +1,38 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { MockInstance } from 'vitest';
-import { mount, flushPromises } from '@vue/test-utils';
+import { ref } from 'vue';
+import { mount } from '@vue/test-utils';
 import VscIcon from './VscIcon.vue';
 
-const svgIcon =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"/></svg>';
-const mockGetIcon = vi.fn().mockResolvedValue(svgIcon);
+const { mockUseIcon } = vi.hoisted(() => ({
+  mockUseIcon: vi.fn(),
+}));
+const svgIconContent =
+  '<path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"></path>';
 
-vi.mock('@/composables/useIconLoader', () => ({
-  useIconLoader: () => ({
-    getIcon: mockGetIcon,
-  }),
+vi.mock('./composables/useIcon', () => ({
+  useIcon: mockUseIcon,
 }));
 
 describe('VscIcon: Корректное отображение иконки', () => {
-  let mockParent: HTMLElement;
-
   beforeEach(() => {
-    mockParent = document.createElement('button');
-    document.body.appendChild(mockParent);
+    mockUseIcon.mockReturnValue({
+      viewBox: ref('0 0 24 24'),
+      iconContent: ref(svgIconContent),
+    });
   });
 
   afterEach(() => {
-    document.body.removeChild(mockParent);
     vi.clearAllMocks();
   });
 
   it('При указании "size", "color" и атрибутов.', async () => {
     const size = '1.5rem';
     const iconColor = 'red';
+    const iconName = 'public:attach-file';
 
-    mount(VscIcon, {
+    const wrapper = mount(VscIcon, {
       props: {
-        iconName: 'public:attach-file',
+        iconName,
         iconColor,
         size,
         ariaHidden: false,
@@ -41,143 +41,102 @@ describe('VscIcon: Корректное отображение иконки', ()
         class: 'test-class',
         'data-test': 'icon-test',
       },
-      attachTo: mockParent,
     });
 
-    expect(mockGetIcon).toHaveBeenCalledWith('public:attach-file');
+    const expectedStyle = `color: ${iconColor}`;
 
-    await flushPromises();
+    expect(mockUseIcon).toHaveBeenCalledWith(
+      expect.objectContaining({
+        value: iconName,
+      })
+    );
 
-    const svg = mockParent.querySelector('svg');
+    expect(wrapper.attributes('width')).toBe(size);
+    expect(wrapper.attributes('height')).toBe(size);
+    expect(wrapper.attributes('class')).toBe('test-class');
+    expect(wrapper.attributes('data-test')).toBe('icon-test');
+    expect(wrapper.attributes('aria-hidden')).toBe('false');
+    expect(wrapper.attributes('style')).toContain(expectedStyle);
 
-    expect(svg).toBeTruthy();
-
-    if (svg) {
-      expect(svg.getAttribute('width')).toBe(size);
-      expect(svg.getAttribute('height')).toBe(size);
-      expect(svg.getAttribute('class')).toBe('test-class');
-      expect(svg.getAttribute('data-test')).toBe('icon-test');
-      expect(svg.getAttribute('aria-hidden')).toBe('false');
-      expect(svg.getAttribute('style')).toContain(`color: ${iconColor}`);
-    }
-
-    expect(mockParent.querySelector('i')).toBeNull();
+    expect(wrapper.html()).toContain(
+      `<svg xmlns="http://www.w3.org/2000/svg" style="${expectedStyle};" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="false" class="test-class" data-test="icon-test">
+  ${svgIconContent}
+</svg>`
+    );
   });
 
   it('С размерами и aria-hidden по умолчанию.', async () => {
-    mount(VscIcon, {
+    const iconName = 'mdi:home';
+    const wrapper = mount(VscIcon, {
+      props: {
+        iconName,
+      },
+    });
+
+    expect(mockUseIcon).toHaveBeenCalledWith(
+      expect.objectContaining({
+        value: iconName,
+      })
+    );
+
+    expect(wrapper.attributes('width')).toBe('1rem');
+    expect(wrapper.attributes('height')).toBe('1rem');
+    expect(wrapper.attributes('style')).toBeUndefined();
+    expect(wrapper.attributes('aria-hidden')).toBe('true');
+  });
+
+  it('Обновление иконки при изменении iconName.', async () => {
+    const iconName = 'mdi:airplane';
+    const wrapper = mount(VscIcon, {
+      props: {
+        iconName,
+      },
+    });
+
+    expect(mockUseIcon).toHaveBeenCalledWith(
+      expect.objectContaining({
+        value: iconName,
+      })
+    );
+
+    const newIconName = 'public:attach-file';
+
+    await wrapper.setProps({ iconName: newIconName });
+
+    expect(mockUseIcon).toHaveBeenCalledWith(
+      expect.objectContaining({
+        value: newIconName,
+      })
+    );
+  });
+
+  it('Отображение viewBox из composable.', async () => {
+    mockUseIcon.mockReturnValue({
+      viewBox: ref('0 0 32 32'),
+      iconContent: ref(svgIconContent),
+    });
+
+    const wrapper = mount(VscIcon, {
       props: {
         iconName: 'mdi:home',
       },
-      attachTo: mockParent,
     });
 
-    expect(mockGetIcon).toHaveBeenCalledWith('mdi:home');
-
-    await flushPromises();
-
-    const svg = mockParent.querySelector('svg');
-
-    expect(svg).toBeTruthy();
-
-    if (svg) {
-      expect(svg.getAttribute('width')).toBe('1rem');
-      expect(svg.getAttribute('height')).toBe('1rem');
-      expect(svg.getAttribute('aria-hidden')).toBe('true');
-    }
-  });
-});
-
-describe('VscIcon: Ошибки', () => {
-  let consoleSpy: MockInstance;
-  let mockUseTemplateRef: MockInstance = vi.fn();
-
-  beforeEach(() => {
-    consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    vi.resetModules();
+    expect(wrapper.attributes('viewBox')).toBe('0 0 32 32');
   });
 
-  afterEach(() => {
-    consoleSpy.mockRestore();
-    vi.clearAllMocks();
-  });
-
-  vi.doMock('vue', async (importOriginal) => {
-    const actual = await (importOriginal() as any);
-
-    return {
-      ...actual,
-      useTemplateRef: mockUseTemplateRef,
-    };
-  });
-
-  it('Не найден родительский элемент.', async () => {
-    const orphanElement = document.createElement('i');
-
-    mockUseTemplateRef.mockReturnValue({
-      value: orphanElement,
+  it('Отсутствие иконки при ошибке обработки.', async () => {
+    mockUseIcon.mockReturnValue({
+      viewBox: ref('0 0 24 24'),
+      iconContent: ref(''),
     });
 
-    const { default: VscIconLocal } = await import('./VscIcon.vue');
-
-    mount(VscIconLocal, {
+    const wrapper = mount(VscIcon, {
       props: {
-        iconName: 'mdi:file',
+        iconName: 'public:icon',
       },
     });
 
-    await flushPromises();
-
-    expect(consoleSpy).toHaveBeenCalledWith('Не найден родитель для элемента.');
-  });
-
-  it('Не найден элемент с ref="icon".', async () => {
-    mockUseTemplateRef.mockReturnValue({
-      value: null,
-    });
-
-    const { default: VscIconLocal } = await import('./VscIcon.vue');
-
-    mount(VscIconLocal, {
-      props: {
-        iconName: 'mdi:file',
-      },
-    });
-
-    await flushPromises();
-
-    expect(consoleSpy).toHaveBeenCalledWith('Не найден элемент с ref="icon".');
-  });
-
-  const mockGetIconWithoutSvg: MockInstance = vi.fn();
-
-  vi.doMock('@/composables/useIconLoader', () => ({
-    useIconLoader: () => ({
-      getIcon: mockGetIconWithoutSvg,
-    }),
-  }));
-
-  it('Не смог найти тег <svg>.', async () => {
-    const mockIconElement = document.createElement('i');
-    const mockParent = document.createElement('div');
-
-    mockParent.appendChild(mockIconElement);
-    mockGetIconWithoutSvg.mockResolvedValue('<div>Not an SVG</div>');
-
-    mockUseTemplateRef.mockReturnValue({
-      value: mockIconElement,
-    });
-
-    const { default: VscIconLocal } = await import('./VscIcon.vue');
-
-    mount(VscIconLocal, {
-      props: {
-        iconName: 'mdi:file',
-      },
-    });
-
-    await flushPromises();
-
-    expect(consoleSpy).toHaveBeenCalledWith('Не смог найти тег <svg>.');
+    expect(wrapper.html()).not.toContain('<path');
   });
 });

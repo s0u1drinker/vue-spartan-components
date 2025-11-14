@@ -1,4 +1,7 @@
+import type { Ref } from 'vue';
+
 type IconSize = `${number}px` | `${number}%` | `${number}rem` | `${number}em`;
+
 export type IconName = `${any}${string}:${any}${string}`;
 
 export interface IconProps {
@@ -19,3 +22,20 @@ export interface IconProps {
    */
   ariaHidden?: boolean;
 }
+
+export interface UseIcon {
+  viewBox: Ref<string>;
+  iconContent: Ref<string>;
+}
+
+export interface UseIconLoader {
+  getIcon: () => Promise<string>;
+  loadError: Ref<string>;
+}
+
+export type CacheIcon = Map<IconName, string>;
+export type CachePromise = Map<IconName, Promise<boolean>>;
+
+export type IconPath =
+  | `/icons/${string}.svg`
+  | `https://api.iconify.design/${string}/${string}.svg`;

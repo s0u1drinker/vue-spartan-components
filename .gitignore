@@ -29,6 +29,3 @@ storybook-static
 e2e/results
 e2e/results/*
 e2e/tests/*/
-
-dev
-dev/*

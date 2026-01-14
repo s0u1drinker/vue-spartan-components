@@ -1,24 +1,44 @@
-import type { IconName } from '@components/VscIcon/types';
+import type { IconName, IconSize } from '@components/VscIcon/types';
 
-export interface VscRatingProps {
-  /**
-   * Имя иконки.
-   */
-  ratingIcon: IconName;
-  /**
-   * Текущее значение.
-   */
-  currentValue: number;
-  /**
-   * Максимальное значение.
-   */
-  maxValue?: number;
-  /**
-   * Отобразить минимальную версию.
-   */
+export type VscRatingProps = {
+  /** Имя иконки. */
+  iconName: IconName;
+  /** Отобразить минимальную версию. */
   minimize?: boolean;
-  /**
-   * Показывать максимальное значение.
-   */
+  /** Размер иконки. */
+  iconSize?: IconSize;
+  /** Максимальное значение. */
+  maxValue?: number;
+  /** Показывать максимальное значение. */
   showMaxValue?: boolean;
+  /** Флаг установки рейтинга. */
+  setRating?: boolean;
+};
+
+export interface VscRatingIndicatorProps {
+  /** Текущее значение. */
+  currentValue: number;
+  /** Отобразить минимальную версию. */
+  minimize: boolean;
+  /** Количество иконок для отображения. */
+  iconsCount: number;
+};
+
+export interface VscRatingIndicatorIconsProps {
+  /** Количество иконок. */
+  count: number;
+  /** Иконки не закрашены. */
+  unfilled?: boolean;
 }
+
+export interface VscRatingSetterProps {
+  /** Максимальное значение. */
+  maxValue: number;
+}
+
+interface SetterElement {
+  selected: boolean;
+  value: number;
+}
+
+export type VscRatingSetterElements = SetterElement[];

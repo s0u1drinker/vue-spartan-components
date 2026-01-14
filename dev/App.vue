@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { VscButton, VscIcon, VscRating } from '../src/components';
+import './index.css';
 
-const rating = ref<number>(4.5);
+const rating = ref<number>(8.3);
+const maxValue = ref<number>(10);
 const handleButtonClick = () => {
-  rating.value = 11;
+  maxValue.value = 3;
   console.log('Click!');
 };
 </script>
@@ -19,7 +21,13 @@ const handleButtonClick = () => {
     <VscIcon icon-name="public:attach-file" />
     <span>Прикрепить</span>
   </VscButton>
-  <VscRating :current-value="rating" rating-icon="public:star" />
+  <VscRating
+    icon-name="public:star"
+    icon-size="1.5rem"
+    :maxValue="maxValue"
+    showMaxValue
+    v-model="rating"
+  />
 </template>
 
 <style scoped lang="scss"></style>

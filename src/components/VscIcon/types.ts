@@ -1,6 +1,10 @@
 import type { Ref } from 'vue';
 
-type IconSize = `${number}px` | `${number}%` | `${number}rem` | `${number}em`;
+export type IconSize =
+  | `${number}px`
+  | `${number}%`
+  | `${number}rem`
+  | `${number}em`;
 
 export type IconName = `${any}${string}:${any}${string}`;
 

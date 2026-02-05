@@ -30,6 +30,10 @@ export default defineConfig([
     },
     rules: {
       ...ts.configs.recommended.rules,
+      // Порядок в <script setup>.
+      'vue/define-macros-order': ['error', {
+        order: ['defineOptions', 'defineProps', 'defineEmits', 'defineSlots']
+      }],
     },
   },
   {

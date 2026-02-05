@@ -44,3 +44,9 @@ export const ICON_MAIN_CLASS = {
   name: CLASSES.main,
   selector: `.${CLASSES.main}`,
 } as const;
+
+/** Класс выбранной иконки. */
+export const ICON_SELECTED_CLASS = {
+  name: CLASSES.selected,
+  selector: `.${CLASSES.selected}`,
+} as const;

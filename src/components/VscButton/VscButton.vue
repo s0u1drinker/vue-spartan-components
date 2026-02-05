@@ -124,10 +124,6 @@ onMounted(() => {
     background-color var(--vsc-transition),
     transform var(--vsc-transition);
 
-  &:focus {
-    outline: none;
-  }
-
   &:active:not(:disabled) {
     transform: scale(0.95);
   }

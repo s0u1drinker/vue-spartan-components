@@ -1,8 +1,8 @@
 import { computed } from 'vue';
 import { isNonNegativeNumber, isPositiveNumber } from '@utils';
-import type { useRatingParams, useRatingReturn } from './types';
+import type { UseRatingParams, UseRatingReturn } from './types';
 
-export function useRating(rating: useRatingParams): useRatingReturn {
+export function useRating(rating: UseRatingParams): UseRatingReturn {
   /** Текущее значение правильное. */
   const isValidCurrentValue = computed(() => {
     if (!isNonNegativeNumber(rating.current.value)) {

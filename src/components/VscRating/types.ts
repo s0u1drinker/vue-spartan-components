@@ -15,6 +15,10 @@ export type VscRatingProps = {
   setRating?: boolean;
 };
 
+export type VscRatingPropsNames = {
+  [K in keyof VscRatingProps]: K;
+};
+
 export interface VscRatingIndicatorProps {
   /** Текущее значение. */
   currentValue: number;
@@ -22,13 +26,13 @@ export interface VscRatingIndicatorProps {
   minimize: boolean;
   /** Количество иконок для отображения. */
   iconsCount: number;
-};
+}
 
-export interface VscRatingIndicatorIconsProps {
+export interface VscRatingIconsProps {
   /** Количество иконок. */
   count: number;
-  /** Иконки не закрашены. */
-  unfilled?: boolean;
+  /** Иконки закрашены. */
+  filled?: boolean;
 }
 
 export interface VscRatingSetterProps {

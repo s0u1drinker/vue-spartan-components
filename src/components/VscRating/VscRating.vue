@@ -24,12 +24,12 @@
 </template>
 
 <script setup lang="ts">
-  import { defineAsyncComponent, toRef, computed, provide } from 'vue';
+  import { toRef, computed, provide } from 'vue';
+  import VscRatingIndicator from './VscRatingIndicator.vue';
+  import VscRatingSetter from './VscRatingSetter.vue';
   import { useRating } from './composables/useRating';
   import { MIN_RATING_VALUE, RATING_PROP_NAMES, RATING_KEYS, DEFAULT_ICON_SIZE } from './constants';
   import type { VscRatingProps } from './types';
-  const VscRatingIndicator = defineAsyncComponent(() => import('./VscRatingIndicator.vue'));
-  const VscRatingSetter = defineAsyncComponent(() => import('./VscRatingSetter.vue'));
 
   const props = withDefaults(defineProps<VscRatingProps>(), {
     maxValue: 5,

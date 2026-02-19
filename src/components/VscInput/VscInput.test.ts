@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
+import { INPUT_TYPES } from './constants';
 import VscInput from './VscInput.vue';
 
 describe('VscInput', () => {
@@ -13,22 +14,22 @@ describe('VscInput', () => {
 
   it('Prop "type".', async () => {
     const wrapper = mount(VscInput, {
-      props: { type: 'email' },
+      props: { type: INPUT_TYPES.email },
     });
     const input = wrapper.find('input');
 
-    expect(input.attributes('type')).toBe('email');
+    expect(input.attributes('type')).toBe(INPUT_TYPES.email);
 
-    await wrapper.setProps({ type: 'password' });
+    await wrapper.setProps({ type: INPUT_TYPES.password });
 
-    expect(input.attributes('type')).toBe('password');
+    expect(input.attributes('type')).toBe(INPUT_TYPES.password);
   });
 
   it('Prop "placeholder".', () => {
     const PLACEHOLDER = 'Введите ваш текст';
     const wrapper = mount(VscInput, {
       props: {
-        type: 'text',
+        type: INPUT_TYPES.text,
         placeholder: PLACEHOLDER,
       },
     });
@@ -40,7 +41,7 @@ describe('VscInput', () => {
   it('Prop "disabled".', () => {
     const wrapper = mount(VscInput, {
       props: {
-        type: 'text',
+        type: INPUT_TYPES.text,
         disabled: true,
       },
     });
@@ -53,7 +54,7 @@ describe('VscInput', () => {
   it('Prop "readonly".', () => {
     const wrapper = mount(VscInput, {
       props: {
-        type: 'text',
+        type: INPUT_TYPES.text,
         readonly: true,
       },
     });
@@ -66,7 +67,7 @@ describe('VscInput', () => {
   it('Prop "required".', () => {
     const wrapper = mount(VscInput, {
       props: {
-        type: 'text',
+        type: INPUT_TYPES.text,
         required: true,
       },
     });
@@ -81,7 +82,7 @@ describe('VscInput', () => {
     const NEW_MODEL_VALUE = 'Новый текст';
     const wrapper = mount(VscInput, {
       props: {
-        type: 'text',
+        type: INPUT_TYPES.text,
         modelValue: MODEL_VALUE,
       },
     });
@@ -98,7 +99,7 @@ describe('VscInput', () => {
     const MODEL_VALUE = 'Привет';
     const wrapper = mount(VscInput, {
       props: {
-        type: 'search',
+        type: INPUT_TYPES.search,
         modelValue: '',
         'update:modelValue': (e: string) => wrapper.setProps({ modelValue: e }),
       },

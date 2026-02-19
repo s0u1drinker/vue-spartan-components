@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import { VscButton, VscIcon, VscMessage } from '../src/components';
+  import { VscButton, VscIcon, VscInputText } from './../src/components';
   import './index.css';
 
   const inp = ref('');
@@ -22,11 +22,13 @@
     <VscIcon icon-name="public:attach-file" />
     <span>Прикрепить</span>
   </VscButton>
-  <VscMessage
-    class="msg"
-    message="Text for test"
-    icon="mdi:home"
+  <VscInputText
+    label="Логин"
+    placeholder="Какой-нибудь текст..."
+    required
+    v-model="inp"
   />
+  {{ inp }}
 </template>
 
 <style scoped lang="scss"></style>

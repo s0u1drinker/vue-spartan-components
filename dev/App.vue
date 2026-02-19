@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import { VscButton, VscIcon, VscInput } from '../src/components';
+  import { VscButton, VscIcon, VscInput, VscLabel } from '../src/components';
   import './index.css';
 
   const inp = ref('');
@@ -22,12 +22,20 @@
     <VscIcon icon-name="public:attach-file" />
     <span>Прикрепить</span>
   </VscButton>
-  <VscInput
-    type="text"
-    placeholder="Какой-нибудь текст..."
-    required
-    v-model="inp"
-  />
+  <div>
+    <VscLabel
+      id="input-1"
+      label-text="Ok, let`s go"
+      required
+    />
+    <VscInput
+      id="input-1"
+      type="text"
+      placeholder="Какой-нибудь текст..."
+      required
+      v-model="inp"
+    />
+  </div>
   {{ inp }}
 </template>
 

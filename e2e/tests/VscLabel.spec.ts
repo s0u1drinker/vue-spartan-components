@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-test.describe('VscLabel Component', () => {
+test.describe('VscLabel', () => {
   const MARK_CLASS = '.vsc-label__mark';
   /** Хелпер для открытия чистого компонента VscLabel. */
   const openLabelStory = async (page: Page, storyName: string, args: string = '') => {

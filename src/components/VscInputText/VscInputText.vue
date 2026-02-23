@@ -1,19 +1,12 @@
 <template>
   <div class="vsc-input-text">
-    <label
-      class="vsc-input-text__label"
-      :for="inputId"
+    <VscLabel
       v-if="label"
-    >
-      {{ label }}
-      <span
-        class="vsc-input-text__mark"
-        v-if="required"
-        aria-hidden="true"
-      >
-        *
-      </span>
-    </label>
+      :id="inputId"
+      :label-text="label"
+      :required
+      :required-mark
+    />
     <div class="vsc-input-text__input-wrapper">
       <VscInput
         :id="inputId"
@@ -37,7 +30,7 @@
 
 <script setup lang="ts">
   import { useId, computed } from 'vue';
-  import { VscInput, VscMessage } from '@components';
+  import { VscInput, VscMessage, VscLabel } from '@components';
   import { LABEL_STYLE } from './constants';
   import { INPUT_TYPES } from '../VscInput/constants';
   import type { VscInputTextProps } from './types';

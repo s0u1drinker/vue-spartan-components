@@ -1,13 +1,19 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import { VscButton, VscIcon, VscInputText } from './../src/components';
+  import type { VscInputMessgaeError } from './../src/types';
   import './index.css';
 
   const inp = ref('');
-  const maxValue = ref<number>(10);
+  const show = ref(false);
   const handleButtonClick = () => {
-    maxValue.value = 3;
-    console.log('Click!');
+    show.value = !show.value;
+  };
+  const error: VscInputMessgaeError = {
+    isError: true,
+    message: 'Ошибка ввода данных',
+    icon: 'mdi:warning',
+    showBackground: false,
   };
 </script>
 
@@ -26,6 +32,8 @@
     label="Логин"
     placeholder="Какой-нибудь текст..."
     required
+    :show-error="show"
+    :error
     v-model="inp"
   />
   {{ inp }}

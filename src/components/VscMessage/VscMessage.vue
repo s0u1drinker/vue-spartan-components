@@ -5,7 +5,7 @@
       class="vsc-message__icon"
       :icon-name="icon"
       size="1.25rem"
-      aria-hidden="true"
+      :aria-hidden="true"
     />
     <span>{{ message }}</span>
   </div>

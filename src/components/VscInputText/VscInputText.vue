@@ -1,6 +1,7 @@
 <template>
-  <div class="vsc-input-text">
+  <div :class="classes">
     <VscLabel
+      class="vsc-input-text__label"
       v-if="label"
       :id="inputId"
       :label-text="label"
@@ -31,7 +32,7 @@
 <script setup lang="ts">
   import { useId, computed } from 'vue';
   import { VscInput, VscMessage, VscLabel } from '@components';
-  import { LABEL_STYLE } from './constants';
+  import { LABEL_STYLE, MAIN_CLASS } from './constants';
   import { INPUT_TYPES } from '../VscInput/constants';
   import type { VscInputTextProps } from './types';
 
@@ -39,6 +40,13 @@
     labelStyle: LABEL_STYLE.default,
   });
   const generatedId = useId();
+  /** Классы компонента. */
+  const classes = computed(() => [
+    MAIN_CLASS,
+    {
+      [`${MAIN_CLASS}_column`]: props?.labelStyle === LABEL_STYLE.column,
+    },
+  ]);
   /** Идентификатор. */
   const inputId = computed<string>(() => props.id || generatedId);
   /** Флаг отображения сообщения. */
@@ -50,6 +58,7 @@
 <style scoped lang="scss">
   .vsc-input-text {
     --vsc-input-text-gap: var(--vsc-indent);
+    --vsc-input-text-gap-grid: var(--vsc-indent-half);
     --vsc-input-text-label-width: auto;
     --vsc-input-text-padding: var(--vsc-indent-quarter) var(--vsc-indent-half);
     --vsc-input-text-message-color: var(--vsc-error);
@@ -68,11 +77,6 @@
       width: var(--vsc-input-text-label-width);
     }
 
-    &__mark {
-      color: var(--vsc-error);
-      margin-left: var(--indent-half);
-    }
-
     &__input-wrapper {
       display: flex;
       flex-direction: column;
@@ -84,6 +88,13 @@
       --vsc-message-icon-color: var(--vsc-input-text-message-icon-color);
       --vsc-message-text-color: var(--vsc-input-text-message-color);
       --vsc-message-background-color: var(--vsc-input-text-message-bg-color);
+    }
+
+    &_column {
+      flex-direction: column;
+      gap: var(--vsc-input-text-gap-grid);
+      align-items: stretch;
+      width: fit-content;
     }
   }
 </style>

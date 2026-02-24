@@ -29,6 +29,7 @@
     <span>Прикрепить</span>
   </VscButton>
   <VscInputText
+    class="input"
     label="Логин"
     placeholder="Какой-нибудь текст..."
     required
@@ -39,4 +40,9 @@
   {{ inp }}
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+  .input {
+    --vsc-input-text-padding: 1rem;
+    margin-top: 1rem;
+  }
+</style>

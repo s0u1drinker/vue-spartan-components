@@ -4,20 +4,6 @@ import VscMessage from './VscMessage.vue';
 const meta = {
   title: 'VscMessage',
   component: VscMessage,
-  argTypes: {
-    message: {
-      control: 'text',
-      description: 'Текст сообщения',
-    },
-    icon: {
-      control: 'text',
-      description: 'Имя иконки',
-    },
-    showBackground: {
-      control: 'boolean',
-      description: 'Показать фон',
-    },
-  },
 } satisfies Meta<typeof VscMessage>;
 
 export default meta;
@@ -80,7 +66,8 @@ export const MultipleMessages: Story = {
       <VscMessage
         style="--vsc-message-text-color: red;"
         message="Какая-то ошибка" 
-        icon="mdi:alert" 
+        icon="mdi:alert"
+        :is-error="true"
       />
       <VscMessage
         style="--vsc-message-icon-color: green; --vsc-message-background-color: lightgreen;"
@@ -91,7 +78,8 @@ export const MultipleMessages: Story = {
       <VscMessage
         style="--vsc-message-background-color: violet;"
         message="Просто акцентируем внимание на сообщении." 
-        show-background 
+        show-background
+        role="log"
       />
       <VscMessage
         style="width: 200px;"

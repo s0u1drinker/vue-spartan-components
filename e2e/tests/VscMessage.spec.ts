@@ -113,4 +113,30 @@ test.describe('VscMessage', () => {
     await expect(thirdMessage).toContainText('Просто акцентируем внимание');
     await expect(thirdMessage).toHaveCSS('background-color', 'rgb(238, 130, 238)');
   });
+
+  test('По умолчанию role === "status" и aria-atomic === "true".', async ({ page }) => {
+    const message = await openMessageStory(page, 'default');
+
+    await expect(message).toHaveAttribute('role', 'status');
+    await expect(message).toHaveAttribute('aria-atomic', 'true');
+  });
+
+  test('Переключает role на "alert" при isError === true.', async ({ page }) => {
+    const message = await openMessageStory(page, 'default', 'isError:true');
+
+    await expect(message).toBeVisible();
+    await expect(message).toHaveAttribute('role', 'alert');
+  });
+
+  test('Позволяет переопределить role через props.', async ({ page }) => {
+    await page.goto(`/iframe.html?id=vscmessage--multiple-messages&viewMode=story`);
+
+    const messages = page.locator(CLASS_SELECTOR);
+
+    await messages.first().waitFor();
+
+    const thirdMessage = messages.nth(2);
+
+    await expect(thirdMessage).toHaveAttribute('role', 'log');
+  });
 });

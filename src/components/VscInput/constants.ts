@@ -1,3 +1,6 @@
+export const BASE_CLASS = 'vsc-input-base';
+
+/** Типы комопнентов. */
 export const INPUT_TYPES = {
   text: 'text',
   password: 'password',
@@ -6,4 +9,10 @@ export const INPUT_TYPES = {
   tel: 'tel',
   url: 'url',
   search: 'search',
+} as const;
+
+/** Стили отображения подписи. */
+export const LABEL_STYLE = {
+  default: 'default',
+  column: 'column',
 } as const;

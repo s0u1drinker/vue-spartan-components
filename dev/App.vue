@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import { VscButton, VscIcon, VscInputText } from './../src/components';
-  import type { VscInputMessgaeError } from './../src/types';
+  import type { VscMessageProps } from './../src/components/VscMessage/types';
   import './index.css';
 
   const inp = ref('');
@@ -9,7 +9,7 @@
   const handleButtonClick = () => {
     show.value = !show.value;
   };
-  const error: VscInputMessgaeError = {
+  const error: VscMessageProps = {
     isError: true,
     message: 'Ошибка ввода данных',
     icon: 'mdi:warning',
@@ -29,6 +29,7 @@
     <span>Прикрепить</span>
   </VscButton>
   <VscInputText
+    id="login"
     class="input"
     label="Логин"
     placeholder="Какой-нибудь текст..."
@@ -37,7 +38,7 @@
     :error
     v-model="inp"
   />
-  {{ inp }}
+  Данные: {{ inp }}
 </template>
 
 <style scoped lang="scss">

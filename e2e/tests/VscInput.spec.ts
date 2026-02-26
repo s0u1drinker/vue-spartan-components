@@ -39,6 +39,7 @@ test.describe('VscInput', () => {
     const input = await openComponent(page, 'modelValue:Отключен', 'disabled-input');
 
     await expect(input).toBeDisabled();
+    await expect(input).toHaveAttribute('type', 'search');
     await expect(input).toHaveCSS('cursor', 'not-allowed');
   });
 
@@ -46,7 +47,30 @@ test.describe('VscInput', () => {
     const input = await openComponent(page, `modelValue:Только для чтения`, 'readonly-input');
 
     await expect(input).toHaveAttribute('readonly', '');
+    await expect(input).toHaveAttribute('type', 'email');
     await expect(input).toHaveCSS('opacity', '0.6');
     await expect(input).toHaveCSS('cursor', 'not-allowed');
+  });
+
+  test('Invalid input имеет корректные aria-атрибуты и стиль.', async ({ page }) => {
+    const input = await openComponent(page, '', 'invalid-input');
+
+    await expect(input).toHaveAttribute('aria-invalid', 'true');
+    await expect(input).toHaveAttribute('aria-describedby', 'error-message-id');
+    await expect(input).toHaveCSS('border-color', 'rgb(255, 0, 0)');
+  });
+
+  test('Кастомные стили через CSS-переменные применяются корректно.', async ({ page }) => {
+    const input = await openComponent(page, '', 'custom-styles');
+
+    await expect(input).toHaveCSS('border-radius', '20px');
+    await expect(input).toHaveCSS('border-width', '2px');
+    await expect(input).toHaveCSS('border-color', 'rgb(128, 0, 128)');
+    await expect(input).toHaveCSS('padding', '12px');
+    await expect(input).toHaveCSS('background-color', 'rgb(240, 240, 240)');
+
+    await input.focus();
+
+    await expect(input).toHaveCSS('border-color', 'rgb(255, 165, 0)');
   });
 });

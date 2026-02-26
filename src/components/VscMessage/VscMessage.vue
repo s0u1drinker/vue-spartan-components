@@ -1,5 +1,9 @@
 <template>
-  <div :class="componentClass">
+  <div
+    :class="componentClass"
+    :role="messageRole"
+    :aria-atomic
+  >
     <VscIcon
       v-if="icon"
       class="vsc-message__icon"
@@ -7,22 +11,34 @@
       size="1.25rem"
       :aria-hidden="true"
     />
-    <span>{{ message }}</span>
+    <span>{{ messageValue }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
   import { computed } from 'vue';
   import { VscIcon } from '@components';
-  import type { VscMessage } from './types';
+  import type { VscMessageProps } from './types';
+  import type { TRoleMessage } from '@types';
 
-  const props = defineProps<VscMessage>();
+  const props = withDefaults(defineProps<VscMessageProps>(), {
+    ariaAtomic: 'true',
+  });
+
   const componentClass = computed(() => [
     'vsc-message',
     {
       'vsc-message_background': props.showBackground,
     },
   ]);
+
+  const messageValue = computed<string>(() => props.message || '');
+  /** Значение атрибута "role". */
+  const messageRole = computed<TRoleMessage>(() => {
+    if (props?.role) return props.role;
+
+    return props?.isError ? 'alert' : 'status';
+  });
 </script>
 
 <style scoped lang="scss">

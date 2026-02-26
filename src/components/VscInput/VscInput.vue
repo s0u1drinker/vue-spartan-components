@@ -6,6 +6,9 @@
     :disabled
     :readonly
     :required
+    :aria-invalid
+    :aria-describedby
+    :aria-labelledby
     v-model="model"
   />
 </template>
@@ -21,6 +24,7 @@
   .vsc-input {
     --vsc-input-padding: var(--vsc-indent-quarter);
     --vsc-input-border: var(--vsc-border) var(--vsc-gray-500);
+    --vsc-input-bg: transparent;
     --vsc-input-radius: var(--vsc-border-radius);
     --vsc-input-hover: var(--vsc-gray-600);
     --vsc-input-focus: var(--vsc-primary);
@@ -30,6 +34,7 @@
     display: flex;
     position: relative;
     padding: var(--vsc-input-padding);
+    background-color: var(--vsc-input-bg);
     border: var(--vsc-input-border);
     border-radius: var(--vsc-input-radius);
     transition:

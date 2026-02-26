@@ -77,6 +77,43 @@ describe('VscInput', () => {
     expect(input.element.required).toBe(true);
   });
 
+  it('Prop "aria-invalid".', () => {
+    const wrapper = mount(VscInput, {
+      props: {
+        type: INPUT_TYPES.text,
+        ariaInvalid: 'true',
+      },
+    });
+    const input = wrapper.find('input');
+
+    expect(input.attributes('aria-invalid')).toBe('true');
+  });
+
+  it('Prop "aria-describedby".', () => {
+    const DESCRIBED_BY = 'password-info-id';
+    const wrapper = mount(VscInput, {
+      props: {
+        type: INPUT_TYPES.password,
+        ariaDescribedby: DESCRIBED_BY,
+      },
+    });
+    const input = wrapper.find('input');
+
+    expect(input.attributes('aria-describedby')).toBe(DESCRIBED_BY);
+  });
+
+  it('Prop "aria-labelledby".', () => {
+    const LABELLED_BY = 'label-id';
+    const wrapper = mount(VscInput, {
+      props: {
+        type: INPUT_TYPES.url,
+        ariaLabelledby: LABELLED_BY,
+      },
+    });
+    const input = wrapper.find('input');
+    expect(input.attributes('aria-labelledby')).toBe(LABELLED_BY);
+  });
+
   it('Корректное отображение v-model.', async () => {
     const MODEL_VALUE = 'Начальный текст';
     const NEW_MODEL_VALUE = 'Новый текст';

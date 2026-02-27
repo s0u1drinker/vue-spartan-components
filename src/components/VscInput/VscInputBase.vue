@@ -14,7 +14,7 @@
         class="vsc-input-base__error"
         v-if="showMessage"
         v-bind="{ ...props.error }"
-        :message="error?.message || ''"
+        :message="messageText"
       />
     </div>
   </div>
@@ -29,15 +29,15 @@
   const props = withDefaults(defineProps<VscInputBaseProps>(), {
     labelStyle: LABEL_STYLE.default,
   });
-  /** Классы компонента. */
+
   const classes = computed(() => [
     BASE_CLASS,
     {
       [`${BASE_CLASS}_column`]: props?.labelStyle === LABEL_STYLE.column,
     },
   ]);
-  /** Флаг отображения сообщения. */
-  const showMessage = computed<boolean>(() => props?.showError ?? props?.error?.isError ?? false);
+  const showMessage = computed<boolean>(() => !!props?.showError);
+  const messageText = computed<string>(() => props?.error?.message || '');
 </script>
 
 <style scoped lang="scss">

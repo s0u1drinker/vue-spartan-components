@@ -2,10 +2,11 @@
   <VscInputBase
     :id="inputId"
     :label
+    :label-style
     :required
+    :required-mark
     :show-error
     :error
-    :required-mark
   >
     <VscInput
       :id="inputId"

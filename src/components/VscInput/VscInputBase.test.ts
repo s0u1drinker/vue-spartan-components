@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils';
 import VscInputBase from './VscInputBase.vue';
 import { BASE_CLASS, LABEL_STYLE } from './constants';
 import type { VscMessageProps } from './../VscMessage/types';
+import type { VueWrapper } from '@vue/test-utils';
 
 describe('VscInputBase', () => {
   const DEFAULT_ID = 'input-id';
@@ -17,10 +18,9 @@ describe('VscInputBase', () => {
   const SLOT_ELEMENT_SELECTOR = `.${SLOT_ELEMENT_CLASS}`;
   const SLOT_CONTENT = `<input class="${SLOT_ELEMENT_CLASS}" />`;
 
-  const findLabelComponent = (wrapper: ReturnType<typeof mount>) =>
-    wrapper.findComponent({ name: 'VscLabel' });
+  const findLabelComponent = (wrapper: VueWrapper) => wrapper.findComponent({ name: 'VscLabel' });
 
-  const findMessageComponent = (wrapper: ReturnType<typeof mount>) =>
+  const findMessageComponent = (wrapper: VueWrapper) =>
     wrapper.findComponent({ name: 'VscMessage' });
 
   it('Имеет базовый CSS класс.', () => {

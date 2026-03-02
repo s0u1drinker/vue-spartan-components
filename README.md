@@ -14,6 +14,8 @@
 - Кнопка (VscButton);
 - Иконка (VscIcon);
 - Рейтинг (VscRating);
+- Поле ввода текста (VscInputText);
+- Поле ввода пароля (VscInputPassword);
 - ...
 
 ## Установка

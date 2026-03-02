@@ -23,10 +23,14 @@
   }
 
   &:focus-visible {
-    box-shadow:
-      0 0 0 2px var(--vsc-white),
-      0 0 0 4px $color;
+    @include focus-box-shadow($color);
   }
+}
+
+@mixin focus-box-shadow ($color) {
+  box-shadow:
+    0 0 0 2px var(--vsc-white),
+    0 0 0 4px $color; 
 }
 
 @mixin buttonStylesForColor ($colorName, $txtColor) {

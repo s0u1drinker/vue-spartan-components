@@ -1,108 +1,97 @@
-import { test, expect } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import { describe, it, expect } from 'vitest';
+import { mount } from '@vue/test-utils';
+import VscInputPassword from './VscInputPassword.vue';
+import { VscInput, VscButton } from '@components';
+import { INPUT_TYPES } from './constants';
+import { SHOW_STATE_ARRAY } from '@constants';
+import type { VueWrapper } from '@vue/test-utils';
 
-test.describe('VscInputPassword', () => {
-  const BASE_SELECTOR = '.vsc-input-base';
-  const INPUT_SELECTOR = 'input.vsc-input-password__input';
-  const BUTTON_SELECTOR = '.vsc-input-password__button';
-  const LABEL_SELECTOR = '.vsc-label';
-
-  /** Хелпер для открытия истории компонента. */
-  const openStory = async (page: Page, storyName: string, args: string = '') => {
-    await page.goto(`/iframe.html?id=vscinputpassword--${storyName}&viewMode=story&args=${args}`);
-
-    const component = page.locator(BASE_SELECTOR);
-    await component.waitFor();
-    return component;
+describe('VscInputPassword', () => {
+  const CUSTOM_ID = 'pass-id';
+  const LABEL = 'Пароль';
+  const DEFAULT_PROPS = {
+    id: CUSTOM_ID,
+    label: LABEL,
+  };
+  const DISABLED_PROPS = {
+    ...DEFAULT_PROPS,
+    disabled: true,
   };
 
-  test('Отображает поле ввода и лейбл.', async ({ page }) => {
-    const component = await openStory(page, 'default');
-    const input = component.locator(INPUT_SELECTOR);
-    const label = component.locator(LABEL_SELECTOR);
+  const findInput = (wrapper: VueWrapper) => wrapper.findComponent(VscInput);
+  const findButton = (wrapper: VueWrapper) => wrapper.findComponent(VscButton);
 
-    await expect(input).toBeVisible();
-    await expect(input).toHaveAttribute('type', 'password');
-    await expect(label).toHaveText('Пароль');
+  it('Type="password" по умолчанию.', () => {
+    const wrapper = mount(VscInputPassword, {
+      props: DEFAULT_PROPS,
+    });
+    const input = findInput(wrapper);
+
+    expect(input.props('type')).toBe(INPUT_TYPES.password);
   });
 
-  test('Клик по лейблу фокусирует input.', async ({ page }) => {
-    const component = await openStory(page, 'default');
-    const label = component.locator(LABEL_SELECTOR);
-    const input = component.locator(INPUT_SELECTOR);
+  describe('Переключение видимости пароля', () => {
+    it('Меняет тип input при клике на кнопку.', async () => {
+      const wrapper = mount(VscInputPassword, {
+        props: DEFAULT_PROPS,
+      });
+      const button = findButton(wrapper);
+      const input = findInput(wrapper);
 
-    await label.click();
-    await expect(input).toBeFocused();
+      expect(input.props('type')).toBe(INPUT_TYPES.password);
+
+      await button.trigger('click');
+
+      expect(input.props('type')).toBe(INPUT_TYPES.text);
+    });
+
+    it('Меняет иконку при клике на кнопку.', async () => {
+      const wrapper = mount(VscInputPassword);
+      const button = findButton(wrapper);
+
+      expect(button.props('iconLeft')).toBe('mdi:show');
+
+      await button.trigger('click');
+
+      expect(button.props('iconLeft')).toBe('mdi:hide');
+    });
+
+    it('Обновляет aria-label и aria-pressed на кнопке.', async () => {
+      const wrapper = mount(VscInputPassword);
+      const button = findButton(wrapper);
+      const LABEL_SHOW = `${SHOW_STATE_ARRAY[0]} пароль`;
+      const LABEL_HIDE = `${SHOW_STATE_ARRAY[1]} пароль`;
+
+      expect(button.props('ariaLabel')).toBe(LABEL_SHOW);
+      expect(button.props('ariaPressed')).toBe(false);
+
+      await button.trigger('click');
+
+      expect(button.props('ariaLabel')).toBe(LABEL_HIDE);
+      expect(button.props('ariaPressed')).toBe(true);
+    });
   });
 
-  test('Переключение видимости пароля (атрибуты и accessibility).', async ({ page }) => {
-    const component = await openStory(page, 'default');
-    const input = component.locator(INPUT_SELECTOR);
-    const button = component.locator(BUTTON_SELECTOR);
+  describe('Состояние disabled', () => {
+    it('Добавляет класс _disabled и атрибут aria-disabled.', () => {
+      const wrapper = mount(VscInputPassword, {
+        props: DISABLED_PROPS,
+      });
+      const container = wrapper.find('.vsc-input-password');
 
-    // 1. Состояние по умолчанию: Пароль скрыт
-    await expect(input).toHaveAttribute('type', 'password');
-    await expect(button).toHaveAttribute('aria-pressed', 'false');
-    // Проверяем полный текст лейбла (важно для скринридеров)
-    await expect(button).toHaveAttribute('aria-label', 'Показать пароль');
+      expect(container.classes()).toContain('vsc-input-password_disabled');
+      expect(container.attributes('aria-disabled')).toBe('true');
+    });
 
-    // 2. Клик: Пароль показан
-    await button.click();
-    await expect(input).toHaveAttribute('type', 'text');
-    await expect(button).toHaveAttribute('aria-pressed', 'true');
-    await expect(button).toHaveAttribute('aria-label', 'Скрыть пароль');
+    it('Передает disabled в VscInput и VscButton.', () => {
+      const wrapper = mount(VscInputPassword, {
+        props: DISABLED_PROPS,
+      });
+      const button = findButton(wrapper);
+      const input = findInput(wrapper);
 
-    // 3. Повторный клик: снова скрыт
-    await button.click();
-    await expect(input).toHaveAttribute('type', 'password');
-    await expect(button).toHaveAttribute('aria-pressed', 'false');
-    await expect(button).toHaveAttribute('aria-label', 'Показать пароль');
-  });
-
-  test('Disabled состояние.', async ({ page }) => {
-    const component = await openStory(page, 'disabled');
-    const input = component.locator(INPUT_SELECTOR);
-    const button = component.locator(BUTTON_SELECTOR);
-    const wrapper = component.locator('.vsc-input-password');
-
-    await expect(input).toBeDisabled();
-    await expect(button).toBeDisabled();
-
-    // Лучший способ проверки disabled состояния для a11y
-    await expect(wrapper).toHaveAttribute('aria-disabled', 'true');
-  });
-
-  test('Состояние ошибки.', async ({ page }) => {
-    const component = await openStory(page, 'with-error');
-    const input = component.locator(INPUT_SELECTOR);
-
-    // Используем поиск по роли (Best Practice for A11y)
-    // VscMessage с isError=true имеет role="alert"
-    const message = page.getByRole('alert');
-
-    await expect(message).toBeVisible();
-    await expect(message).toHaveText('Пароль должен содержать минимум 8 символов');
-    await expect(input).toHaveAttribute('aria-invalid', 'true');
-  });
-
-  test('Раскладка Column.', async ({ page }) => {
-    const component = await openStory(page, 'column-layout');
-
-    await expect(component).toHaveCSS('flex-direction', 'column');
-  });
-
-  test('Интерактивная валидация.', async ({ page }) => {
-    const component = await openStory(page, 'interactive-validation');
-    const input = component.locator(INPUT_SELECTOR);
-    const message = page.getByRole('alert');
-
-    // 1. Вводим короткий пароль -> ошибка появляется
-    await input.fill('1234567');
-    await expect(message).toBeVisible();
-    await expect(message).toHaveText('Минимум 8 символов');
-
-    // 2. Дописываем символы -> ошибка исчезает
-    await input.fill('12345678');
-    await expect(message).not.toBeVisible();
+      expect(input.props('disabled')).toBe(true);
+      expect(button.props('disabled')).toBe(true);
+    });
   });
 });

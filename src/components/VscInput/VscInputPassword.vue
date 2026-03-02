@@ -28,7 +28,6 @@
         :icon-left="iconName"
         :aria-label="ariaLabel"
         :aria-pressed="showPasswordText"
-        :rounded="true"
         :disabled
         @click="togglePasswordText"
       />
@@ -85,6 +84,7 @@
     --vsc-input-password-border-color: var(--vsc-gray-500);
     --vsc-input-password-border: var(--vsc-border) var(--vsc-input-password-border-color);
     --vsc-input-password-hover: var(--vsc-gray-600);
+    --vsc-input-password-hover-icon-bg: var(--vsc-gray-400);
     --vsc-input-password-focus: var(--vsc-primary);
     --vsc-input-password-disabled-bg: var(--vsc-gray-200);
     --vsc-input-password-disabled-border: var(--vsc-gray-300);
@@ -129,9 +129,16 @@
       border: 0 none;
       background-color: transparent;
       color: var(--vsc-input-password-border-color);
+      border-radius: 0 var(--vsc-border-radius-inner) var(--vsc-border-radius-inner) 0;
+
+      &:focus-visible {
+        box-shadow: 0 0 0 2px var(--vsc-input-password-hover);
+        background-color: var(--vsc-input-password-hover-icon-bg);
+        color: var(--vsc-input-password-hover);
+      }
 
       &:hover {
-        background-color: transparent;
+        background-color: var(--vsc-input-password-hover-icon-bg);
 
         &:not(:disabled) {
           color: var(--vsc-input-password-hover);

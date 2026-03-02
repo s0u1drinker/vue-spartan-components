@@ -36,7 +36,9 @@ test.describe('VscInputText', () => {
     const input = component.locator(INPUT_SELECTOR);
     const inputId = await input.getAttribute('id');
 
-    await expect(label).toHaveAttribute('for', inputId);
+    expect(inputId).toBeDefined();
+
+    await expect(label).toHaveAttribute('for', inputId!);
 
     await label.click();
 

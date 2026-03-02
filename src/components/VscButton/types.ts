@@ -1,4 +1,4 @@
-import type { ColorThemes, VscCustomColorTheme } from '@types';
+import type { ColorThemes, VscCustomColorTheme, TAriaLabel, TAriaPressed } from '@types';
 import type { IconName } from '@components/VscIcon/types';
 
 export type VscButtonClasses = Record<`vsc-button_${string}`, boolean>;
@@ -7,56 +7,32 @@ type ButtonType = 'button' | 'submit' | 'reset';
 type ButtonStyle = 'plain' | 'outline';
 
 export interface VscButtonProps {
-  /**
-   * Тип кнопки: button | submit | reset. По умолчанию "button".
-   */
+  /** Тип кнопки: button | submit | reset. По умолчанию "button". */
   buttonType?: ButtonType;
-  /**
-   * Стиль кнопки: plain | outline.
-   */
+  /** Стиль кнопки: plain | outline. */
   buttonStyle?: ButtonStyle;
-  /**
-   * Цветовая тема: primary | accent | success | error.
-   */
+  /** Цветовая тема: primary | accent | success | error. */
   colorTheme?: ColorThemes;
-  /**
-   * Настройка своей цветовой темы.
-   */
+  /** Настройка своей цветовой темы. */
   customColorTheme?: VscCustomColorTheme;
-  /**
-   * Атрибут "disabled". По умолчанию "false".
-   */
+  /** Атрибут "disabled". По умолчанию "false". */
   disabled?: boolean;
-  /**
-   * Добавление тени.
-   */
+  /** Добавление тени. */
   elevated?: boolean;
-  /**
-   * Круглые края.
-   */
+  /** Круглые края. */
   rounded?: boolean;
-  /**
-   * Текст.
-   */
+  /** Текст. */
   text?: string;
-  /**
-   * Атрибут "aria-label".
-   */
-  ariaLabel?: string;
-  /**
-   * Икнока слева от текста.
-   */
+  /** Атрибут "aria-label". */
+  ariaLabel?: TAriaLabel;
+  /** Атрибут "aria-pressed". */
+  ariaPressed?: TAriaPressed;
+  /** Икнока слева от текста. */
   iconLeft?: IconName;
-  /**
-   * Иконка справа от текста.
-   */
+  /** Иконка справа от текста. */
   iconRight?: IconName;
-  /**
-   * Цвет иконки.
-   */
+  /** Цвет иконки. */
   iconColor?: string;
-  /**
-   * Отключение возможности дать инлайн-стили кнопке.
-   */
+  /** Отключение возможности дать инлайн-стили кнопке. */
   style?: never;
 }

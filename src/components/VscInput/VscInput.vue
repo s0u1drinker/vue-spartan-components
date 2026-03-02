@@ -16,7 +16,8 @@
 <script setup lang="ts">
   import type { VscInputProps } from './types';
 
-  const props = defineProps<VscInputProps>();
+  defineProps<VscInputProps>();
+
   const model = defineModel();
 </script>
 

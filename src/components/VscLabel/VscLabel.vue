@@ -16,7 +16,7 @@
 <script setup lang="ts">
   import type { VscLabelProps } from './types';
 
-  const props = withDefaults(defineProps<VscLabelProps>(), {
+  withDefaults(defineProps<VscLabelProps>(), {
     requiredMark: '*',
   });
 </script>

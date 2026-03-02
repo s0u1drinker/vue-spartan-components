@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import { VscButton, VscIcon, VscInputText } from './../src/components';
+  import { VscButton, VscIcon, VscInputPassword } from './../src/components';
   import type { VscMessageProps } from './../src/components/VscMessage/types';
   import './index.css';
 
@@ -28,12 +28,11 @@
     <VscIcon icon-name="public:attach-file" />
     <span>Прикрепить</span>
   </VscButton>
-  <VscInputText
+  <VscInputPassword
     id="login"
     class="input"
     label="Логин"
     placeholder="Какой-нибудь текст..."
-    required
     :show-error="show"
     :error
     v-model="inp"

@@ -34,7 +34,9 @@ export type VscInputBaseProps = Pick<VscInputProps, 'required'> & {
 export type VscInputTextProps = Omit<VscInputProps, 'type'> & VscInputBaseProps;
 
 export type VscInputPasswordProps = Pick<VscInputProps, 'placeholder' | 'disabled'> &
-  Omit<VscInputBaseProps, 'required'> & {
+  VscInputBaseProps & {
     iconShow?: IconName;
     iconHide?: IconName;
   };
+
+export type VscInputPasswordTypes = Extract<VscInputTypes, 'text' | 'password'>;

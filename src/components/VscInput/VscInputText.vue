@@ -33,7 +33,7 @@
     labelStyle: LABEL_STYLE.default,
   });
 
-  const model = defineModel();
+  const model = defineModel<string>();
 
   const generatedId = useId();
   /** Идентификатор. */
@@ -44,7 +44,7 @@
 
 <style scoped lang="scss">
   .vsc-input-text {
-    --padding-fallback: var(--vsc-indent-quarter) var(--vsc-indent-half);
+    --padding-fallback: var(--vsc-indent-half);
 
     padding: var(--vsc-input-text-padding, var(--padding-fallback));
   }

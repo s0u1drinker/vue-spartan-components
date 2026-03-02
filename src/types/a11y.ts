@@ -5,3 +5,5 @@ export type TAriaAtomic = AriaAttributes['aria-atomic'];
 export type TAriaInvalid = AriaAttributes['aria-invalid'];
 export type TAriaLabelledby = AriaAttributes['aria-labelledby'];
 export type TAriaDescribedby = AriaAttributes['aria-describedby'];
+export type TAriaPressed = AriaAttributes['aria-pressed'];
+export type TAriaLabel = AriaAttributes['aria-label'];

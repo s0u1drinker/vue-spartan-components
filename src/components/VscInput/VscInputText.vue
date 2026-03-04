@@ -47,5 +47,6 @@
     --padding-fallback: var(--vsc-indent-half);
 
     padding: var(--vsc-input-text-padding, var(--padding-fallback));
+    width: 100%;
   }
 </style>

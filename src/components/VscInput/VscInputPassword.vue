@@ -90,16 +90,16 @@
     --vsc-input-password-disabled-border: var(--vsc-gray-300);
 
     display: flex;
-    align-items: center;
     border: var(--vsc-input-password-border);
     border-radius: var(--vsc-input-password-radius);
+    width: 100%;
     transition:
       border-color var(--vsc-transition),
       background-color var(--vsc-transition),
       color var(--vsc-transition);
 
     @include hover {
-      &:not(.vsc-input-password_disabled):not(:focus-within) {
+      &:not(.vsc-input-password_disabled) {
         border-color: var(--vsc-input-password-hover);
       }
     }
@@ -119,6 +119,7 @@
     &__input {
       border: 0 none;
       padding: var(--vsc-input-password-padding, var(--padding-fallback));
+      flex: 1;
 
       &:focus-visible {
         box-shadow: none;

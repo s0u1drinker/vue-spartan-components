@@ -74,7 +74,6 @@
       flex-direction: column;
       gap: var(--vsc-input-base-gap-grid);
       align-items: stretch;
-      width: fit-content;
     }
   }
 </style>

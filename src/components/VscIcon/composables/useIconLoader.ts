@@ -1,12 +1,6 @@
 import { computed, watchEffect, ref } from 'vue';
 import type { Ref } from 'vue';
-import type {
-  IconName,
-  UseIconLoader,
-  CacheIcon,
-  CachePromise,
-  IconPath,
-} from '../types';
+import type { IconName, UseIconLoader, CacheIcon, CachePromise, IconPath } from '../types';
 
 /**
  * Кэш для иконок.
@@ -59,7 +53,7 @@ export function useIconLoader(iconName: Ref<IconName>): UseIconLoader {
   };
   /** Возвращает SVG-иконку по имени: "prefix:name" - для загрузки из Iconify, "public:name" - из папки. */
   const getIcon = async (): Promise<string> => {
-    if (loadError.value) {
+    if (typeof window === 'undefined' || loadError.value) {
       return '';
     }
 
@@ -79,7 +73,7 @@ export function useIconLoader(iconName: Ref<IconName>): UseIconLoader {
       .then((response: Response) => {
         if (!response.ok) {
           throw new Error(
-            `Не получилось загрузить иконку с именем "${iconName.value}". Статус: ${response.status}`
+            `Не получилось загрузить иконку с именем "${iconName.value}". Статус: ${response.status}`,
           );
         }
 

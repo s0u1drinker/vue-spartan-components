@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useIconLoader } from './useIconLoader';
 import type { Ref } from 'vue';
 import type { IconName, UseIcon } from '../types';
@@ -14,29 +14,35 @@ export function useIcon(iconName: Ref<IconName>): UseIcon {
   /** Содержимое SVG-иконки. */
   const iconContent = ref<string>('');
 
-  watch(
-    iconName,
-    async () => {
-      const iconElement = await getIconContent();
+  onMounted(() => {
+    watch(
+      iconName,
+      async () => {
+        const iconElement = await getIconContent();
 
-      if (iconElement) {
-        // Получаем значение атрибута viewBox.
-        const iconElementViewBox = iconElement.getAttribute('viewBox');
-        // Если есть - обновляем у корневого SVG-элемента.
-        iconElementViewBox && (viewBox.value = iconElementViewBox);
-        // И копируем содержимое (иконку).
-        iconContent.value = iconElement.innerHTML;
-      } else {
-        console.error('Не удалось получить SVG-контент.');
-      }
-    },
-    { immediate: true }
-  );
+        if (iconElement) {
+          // Получаем значение атрибута viewBox.
+          const iconElementViewBox = iconElement.getAttribute('viewBox');
+          // Если есть - обновляем у корневого SVG-элемента.
+          iconElementViewBox && (viewBox.value = iconElementViewBox);
+          // И копируем содержимое (иконку).
+          iconContent.value = iconElement.innerHTML;
+        } else {
+          console.error('Не удалось получить SVG-контент.');
+        }
+      },
+      { immediate: true },
+    );
+  });
   /**
    * Получает SVG-иконку из кэша.
    * @returns SVG-элемент или null.
    */
   async function getIconContent(): Promise<SVGElement | null> {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+
     try {
       if (loadError.value) {
         throw new Error(loadError.value);

@@ -77,7 +77,7 @@
   };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
   .vsc-input-password {
     --padding-fallback: var(--vsc-indent-half);
     --vsc-input-password-radius: var(--vsc-border-radius);
@@ -138,12 +138,9 @@
         color: var(--vsc-input-password-hover);
       }
 
-      &:hover {
+      @include hover {
         background-color: var(--vsc-input-password-hover-icon-bg);
-
-        &:not(:disabled) {
-          color: var(--vsc-input-password-hover);
-        }
+        color: var(--vsc-input-password-hover);
       }
     }
   }

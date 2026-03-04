@@ -40,7 +40,7 @@
   const messageText = computed<string>(() => props?.error?.message || '');
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
   .vsc-input-base {
     --vsc-input-base-gap: var(--vsc-indent);
     --vsc-input-base-gap-grid: var(--vsc-indent-half);

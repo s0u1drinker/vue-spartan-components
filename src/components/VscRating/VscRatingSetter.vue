@@ -117,7 +117,7 @@
   });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   .vsc-rating__setter {
     display: flex;
 

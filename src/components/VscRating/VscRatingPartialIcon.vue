@@ -37,7 +37,7 @@
   }));
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   .vsc-rating__partial-icon {
     display: flex;
     position: relative;

@@ -21,7 +21,7 @@
   const model = defineModel();
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
   .vsc-input {
     --vsc-input-padding: var(--vsc-indent-quarter);
     --vsc-input-border: var(--vsc-border) var(--vsc-gray-500);

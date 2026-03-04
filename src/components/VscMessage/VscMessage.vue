@@ -41,7 +41,7 @@
   });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
   .vsc-message {
     --vsc-message-icon-color: inherit;
     --vsc-message-text-color: inherit;
@@ -59,7 +59,7 @@
     &__icon {
       color: var(--vsc-message-icon-color);
       margin-right: var(--vsc-indent-quarter);
-      vertical-align: bottom;
+      vertical-align: text-bottom;
     }
   }
 </style>

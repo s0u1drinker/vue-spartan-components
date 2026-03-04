@@ -21,7 +21,7 @@
   });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
   .vsc-label {
     --vsc-label-width: auto;
     --vsc-label-mark-color: var(--vsc-error);

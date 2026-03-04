@@ -42,7 +42,7 @@
   const isInvalidValue = computed<boolean>(() => !!props?.error?.isError);
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
   .vsc-input-text {
     --padding-fallback: var(--vsc-indent-half);
 

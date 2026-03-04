@@ -71,7 +71,7 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   .vsc-rating {
     --vsc-rating-gap: var(--vsc-indent);
     --vsc-rating-gap-minimize: var(--vsc-indent-half);

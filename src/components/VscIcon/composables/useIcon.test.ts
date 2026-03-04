@@ -1,11 +1,13 @@
-import { ref } from 'vue';
+import { ref, defineComponent } from 'vue';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { flushPromises } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { useIcon } from './useIcon';
+import type { Ref } from 'vue';
 import type { MockInstance } from 'vitest';
 import type { IconName } from '../types';
 
-const mockIconContent = '<path fill="currentColor" d="test"></path>';
+const mockIconContent = '<path d="test"></path>';
+
 const { mockUseIconLoader } = vi.hoisted(() => ({
   mockUseIconLoader: vi.fn(),
 }));
@@ -21,11 +23,7 @@ describe('useIcon: Корректная работа', () => {
     consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     mockUseIconLoader.mockReturnValue({
-      getIcon: vi
-        .fn()
-        .mockResolvedValue(
-          `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">${mockIconContent}</svg>`
-        ),
+      getIcon: vi.fn().mockResolvedValue(`<svg viewBox="0 0 24 24">${mockIconContent}</svg>`),
       loadError: ref(''),
     });
   });
@@ -35,27 +33,40 @@ describe('useIcon: Корректная работа', () => {
     vi.clearAllMocks();
   });
 
+  const mountWithIcon = (iconNameRef: Ref<IconName>) => {
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          const result = useIcon(iconNameRef);
+          return { ...result };
+        },
+        template: '<div></div>',
+      }),
+    );
+    return wrapper;
+  };
+
   it('Стандартное поведение.', async () => {
     const iconName = ref<IconName>('public:attach-file');
-    const { viewBox, iconContent } = useIcon(iconName);
+    const wrapper = mountWithIcon(iconName);
 
     await flushPromises();
 
-    expect(viewBox.value).toBe('0 0 24 24');
+    expect(wrapper.vm.viewBox).toBe('0 0 24 24');
     expect(consoleSpy).not.toHaveBeenCalled();
-    expect(iconContent.value).toBe(mockIconContent);
+    expect(wrapper.vm.iconContent).toBe(mockIconContent);
   });
 
   it('Реактивное изменение иконки и viewBox.', async () => {
-    const mockIcons = ['<path d="home"></path>', '<path d="airplane"></path>'];
+    const mockIcons = [
+      '<svg viewBox="0 0 32 32"><path d="1"></path></svg>',
+      '<svg viewBox="0 0 48 48"><path d="2"></path></svg>',
+    ];
+
     const getIconMock = vi
       .fn()
-      .mockResolvedValueOnce(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32">${mockIcons[0]}</svg>`
-      )
-      .mockResolvedValueOnce(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48">${mockIcons[1]}</svg>`
-      );
+      .mockResolvedValueOnce(mockIcons[0])
+      .mockResolvedValueOnce(mockIcons[1]);
 
     mockUseIconLoader.mockReturnValue({
       getIcon: getIconMock,
@@ -63,22 +74,21 @@ describe('useIcon: Корректная работа', () => {
     });
 
     const iconName = ref<IconName>('mdi:home');
-    const { viewBox, iconContent } = useIcon(iconName);
+    const wrapper = mountWithIcon(iconName);
 
     await flushPromises();
 
-    expect(viewBox.value).toBe('0 0 32 32');
+    expect(wrapper.vm.viewBox).toBe('0 0 32 32');
     expect(consoleSpy).not.toHaveBeenCalled();
-    expect(iconContent.value).toBe(mockIcons[0]);
+    expect(wrapper.vm.iconContent).toBe('<path d="1"></path>');
 
     iconName.value = 'mdi:airplane';
 
     await flushPromises();
 
-    expect(viewBox.value).toBe('0 0 48 48');
+    expect(wrapper.vm.viewBox).toBe('0 0 48 48');
     expect(consoleSpy).not.toHaveBeenCalled();
-    expect(iconContent.value).toBe(mockIcons[1]);
-
+    expect(wrapper.vm.iconContent).toBe('<path d="2"></path>');
     expect(getIconMock).toHaveBeenCalledTimes(2);
   });
 });
@@ -88,15 +98,6 @@ describe('useIcon: Ошибки', () => {
 
   beforeEach(() => {
     consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    mockUseIconLoader.mockReturnValue({
-      getIcon: vi
-        .fn()
-        .mockResolvedValue(
-          `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">${mockIconContent}</svg>`
-        ),
-      loadError: ref(''),
-    });
   });
 
   afterEach(() => {
@@ -104,22 +105,34 @@ describe('useIcon: Ошибки', () => {
     vi.clearAllMocks();
   });
 
-  it('Не найден тег <svg>.', async () => {
+  const mountWithIcon = (iconNameRef: Ref<IconName>) => {
+    return mount(
+      defineComponent({
+        setup() {
+          return useIcon(iconNameRef);
+        },
+        template: '<div></div>',
+      }),
+    );
+  };
+
+  it('Не найден тег .', async () => {
     mockUseIconLoader.mockReturnValue({
-      getIcon: vi.fn().mockResolvedValueOnce('<div><span>Нет SVG</span></div>'),
+      getIcon: vi.fn().mockResolvedValueOnce('Нет SVG'),
       loadError: ref(''),
     });
 
     const iconName = ref<IconName>('public:no-svg-content');
-    const { iconContent } = useIcon(iconName);
+    const wrapper = mountWithIcon(iconName);
 
     await flushPromises();
 
-    expect(iconContent.value).toBe('');
+    expect(wrapper.vm.iconContent).toBe('');
     expect(consoleSpy).toHaveBeenCalledWith(
       'Ошибка при загрузке иконки:',
-      'Не смог найти тег <svg>.'
+      'Не смог найти тег <svg>.',
     );
+    expect(consoleSpy).toHaveBeenCalledWith('Не удалось получить SVG-контент.');
   });
 
   it('Ошибка при загрузке иконки.', async () => {
@@ -127,31 +140,33 @@ describe('useIcon: Ошибки', () => {
       getIcon: vi.fn().mockResolvedValueOnce(''),
       loadError: ref('Некорректное название иконки: wrong-icon-name'),
     });
+
     // @ts-ignore
-    const iconName = ref<IconName>('wrong-icon-name');
-    const { iconContent } = useIcon(iconName);
+    const iconName = ref('wrong-icon-name');
+    const wrapper = mountWithIcon(iconName as Ref<IconName>);
 
     await flushPromises();
 
-    expect(iconContent.value).toBe('');
+    expect(wrapper.vm.iconContent).toBe('');
     expect(consoleSpy).toHaveBeenCalledWith(
       'Ошибка при загрузке иконки:',
-      'Некорректное название иконки: wrong-icon-name'
+      'Некорректное название иконки: wrong-icon-name',
     );
   });
 
   it('Не удалось получить SVG-контент.', async () => {
     mockUseIconLoader.mockReturnValue({
-      getIcon: vi.fn().mockRejectedValue(''),
+      getIcon: vi.fn().mockRejectedValue('Network Error'),
       loadError: ref(''),
     });
+
     // @ts-ignore
-    const iconName = ref<IconName>('');
-    useIcon(iconName);
+    const iconName = ref('');
+
+    mountWithIcon(iconName as Ref<IconName>);
 
     await flushPromises();
 
-    // Проверяем ошибку из watch
     expect(consoleSpy).toHaveBeenCalledWith('Не удалось получить SVG-контент.');
   });
 });
